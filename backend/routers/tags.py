@@ -10,7 +10,7 @@ import schemas
 router = APIRouter()
 
 @router.post("/", response_model=schemas.TagResponse, status_code=status.HTTP_201_CREATED)
-def create_tag(tag: schemas.TagCreate, db: Session = Depends(get_db)):
+def create(tag: schemas.TagCreate, db: Session = Depends(get_db)):
     existing_tag = db.query(models.Tag).filter(models.Tag.name == tag.name).first()
     if existing_tag:
         raise HTTPException(
@@ -30,7 +30,7 @@ def get_all(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return tags
 
 @router.delete("/{tag_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_tag(tag_id: UUID, db: Session = Depends(get_db)):
+def delete(tag_id: UUID, db: Session = Depends(get_db)):
     tag = db.query(models.Tag).filter(models.Tag.id == tag_id).first()
     if tag is None:
         raise HTTPException(
