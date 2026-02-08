@@ -1,8 +1,19 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from database import engine, SessionLocal
+import models
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
+def read_root(db: Session = Depends(get_db)):
+    return {"Hello": "World", "Database": "Connected"}
