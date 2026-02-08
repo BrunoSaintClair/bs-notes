@@ -1,0 +1,103 @@
+import { useState, useMemo } from "react";
+import type { DictionaryItem } from "../../types";
+
+interface DictionaryProps {
+  items: DictionaryItem[];
+}
+
+export default function Dictionary({ items }: DictionaryProps) {
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  const filteredItems = useMemo(() => {
+    let filtered = items;
+
+    if (selectedLetter) {
+      filtered = filtered.filter((item) => item.letter === selectedLetter);
+    }
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (item) =>
+          item.term.toLowerCase().includes(query) 
+      );
+    }
+
+    return filtered;
+  }, [items, selectedLetter, searchQuery]);
+
+  return (
+    <main className="flex-1 max-w-4xl mx-auto px-6 py-12 w-full">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-text-primary mb-2">Dicionário</h1>
+        <p className="text-gray-600 mb-6">Conheça os termos e conceitos que devem aparecer em alguns posts.</p>
+
+        <div className="flex items-center gap-3 mb-8 px-3 py-2 rounded-lg transition-all duration-200 border border-gray-200 hover:bg-gray-50 focus-within:bg-gray-50 focus-within:border-sage-green">
+          <svg
+            className="w-5 h-5 text-gray-400 transition-colors duration-200 focus-within:text-text-primary"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input
+            type="text"
+            placeholder="Procurar palavra..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1 bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none text-sm transition-colors duration-200"
+          />
+        </div>
+      </div>
+
+      <div className="mb-12 flex flex-wrap gap-3 items-center">
+        <button
+          onClick={() => setSelectedLetter(null)}
+          className={`px-8 py-3 rounded-lg transition-all font-bold text-sm min-w-24 ${
+            selectedLetter === null
+              ? "bg-gray-900 text-white border-2 border-gray-900"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+        >
+          Todos
+        </button>
+        {alphabet.map((letter) => (
+          <button
+            key={letter}
+            onClick={() => setSelectedLetter(letter)}
+            className={`w-12 h-12 flex items-center justify-center rounded-lg transition-all font-extrabold text-lg cursor-pointer ${
+              selectedLetter === letter
+                ? "bg-gray-900 text-white border-2 border-gray-900"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            {letter}
+          </button>
+        ))}
+      </div>
+
+      <div className="space-y-6">
+        {filteredItems.length > 0 ? (
+          filteredItems.map((item) => (
+            <div key={item.id} className="border-l-4 border-sage-green pl-4">
+              <h3 className="text-xl font-bold text-text-primary mb-2">
+                {item.term}
+              </h3>
+              <p className="text-gray-600 wrap-break-word overflow-hidden">{item.definition}</p>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500">Nenhum termo encontrado.</p>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
