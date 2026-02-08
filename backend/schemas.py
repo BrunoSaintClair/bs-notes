@@ -10,7 +10,6 @@ class TagCreate(TagBase):
 
 class TagResponse(TagBase):
     id: UUID
-
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -32,3 +31,15 @@ class DictionaryPaginatedResponse(BaseModel):
     page: int
     size: int
     pages: int
+
+
+class UserBase(BaseModel):
+    username: str
+    email: str
+
+class GoogleLoginRequest(BaseModel):
+    token: str
+
+class UserResponse(UserBase):
+    id: UUID
+    model_config = ConfigDict(from_attributes=True)
