@@ -1,6 +1,8 @@
+import { useState } from "react";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Blog from "./components/Blog/Blog";
+import Dictionary from "./components/Dictionary/Dictionary";
 import type { Post, Tag } from "./types";
 
 const sampleTags: Tag[] = [
@@ -43,12 +45,18 @@ const samplePosts: Post[] = [
 ];
 
 function App() {
+  const [currentPage, setCurrentPage] = useState<"blog" | "dictionary">("blog");
+
   return (
-    <>
-      <Header />
-      <Blog posts={samplePosts} tags={sampleTags} />
+    <div className="flex flex-col min-h-screen">
+      <Header currentPage={currentPage} onPageChange={setCurrentPage} />
+      {currentPage === "blog" ? (
+        <Blog posts={samplePosts} tags={sampleTags} />
+      ) : (
+        <Dictionary />
+      )}
       <Footer />
-    </>
+    </div>
   );
 }
 

@@ -36,7 +36,7 @@ export default function Blog({ posts, tags }: BlogProps) {
   const hasMorePosts = filteredPosts.length > postsToShow;
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-12">
+    <main className="flex-1 max-w-4xl mx-auto px-6 py-12 w-full">
       <div className="flex items-center justify-between gap-6 mb-8 pb-6 border-b border-gray-200">
         <div className="flex gap-8 overflow-x-auto">
           <button

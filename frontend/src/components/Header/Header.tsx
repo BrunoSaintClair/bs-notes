@@ -1,18 +1,37 @@
-const Header = () => {
+interface HeaderProps {
+  currentPage: "blog" | "dictionary";
+  onPageChange: (page: "blog" | "dictionary") => void;
+}
+
+const Header = ({ currentPage, onPageChange }: HeaderProps) => {
     return (
         <header className="bg-white border-b border-gray-200 py-4 px-6">
-            <div className="max-w-6xl mx-auto flex items-center justify-between">
+            <div className="max-w-4xl mx-auto flex items-center justify-between">
                 <div className="flex items-center gap-16">
-                    <a href="">
+                    <button onClick={() => onPageChange("blog")} className="cursor-pointer hover:opacity-80 transition-opacity">
                         <h1 className="text-xl font-bold text-gray-900">UmNomeLegal</h1>
-                    </a>
+                    </button>
                     <nav className="flex gap-8">
-                        <a href="" className="text-gray-500 font-medium hover:text-gray-600 transition-colors">
+                        <button
+                            onClick={() => onPageChange("blog")}
+                            className={`font-medium transition-colors cursor-pointer ${
+                              currentPage === "blog"
+                                ? "text-text-primary border-b-2 border-b-sage-green pb-1"
+                                : "text-gray-500 hover:text-gray-600"
+                            }`}
+                        >
                             Blog
-                        </a>
-                        <a href="" className="text-gray-500 font-medium hover:text-gray-600 transition-colors">
+                        </button>
+                        <button
+                            onClick={() => onPageChange("dictionary")}
+                            className={`font-medium transition-colors cursor-pointer ${
+                              currentPage === "dictionary"
+                                ? "text-text-primary border-b-2 border-b-sage-green pb-1"
+                                : "text-gray-500 hover:text-gray-600"
+                            }`}
+                        >
                             Dicionário
-                        </a>
+                        </button>
                     </nav>
                 </div>
                 <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition-colors">
