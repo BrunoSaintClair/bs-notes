@@ -3,7 +3,7 @@ import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Blog from "./components/Blog/Blog";
 import Dictionary from "./components/Dictionary/Dictionary";
-import type { Post, Tag } from "./types";
+import type { Post, Tag, DictionaryItem } from "./types";
 
 const sampleTags: Tag[] = [
   { id: "1", name: "Investimentos" },
@@ -44,6 +44,51 @@ const samplePosts: Post[] = [
   },
 ];
 
+const sampleDictionaryItems: DictionaryItem[] = [
+  {
+    id: "1",
+    term: "Ação",
+    definition:
+      "Representa uma parcela da propriedade de uma empresa. Ao comprar ações, você se torna sócio da empresa.",
+    letter: "A",
+  },
+  {
+    id: "2",
+    term: "Aporte",
+    definition:
+      "Contribuição de recursos financeiros feita por um investidor para aumentar seu investimento em uma aplicação ou fundo.",
+    letter: "A",
+  },
+  {
+    id: "3",
+    term: "Carteira",
+    definition:
+      "Conjunto de investimentos de um indivíduo ou instituição, incluindo ações, títulos e outros ativos.",
+    letter: "C",
+  },
+  {
+    id: "4",
+    term: "Dividendo",
+    definition:
+      "Parte do lucro de uma empresa que é distribuída aos acionistas como recompensa pelo investimento.",
+    letter: "D",
+  },
+  {
+    id: "5",
+    term: "Fundo de Emergência",
+    definition:
+      "Poupança reservada para cobrir despesas inesperadas ou períodos sem renda, geralmente de 3 a 6 meses.",
+    letter: "F",
+  },
+  {
+    id: "6",
+    term: "Investimento",
+    definition:
+      "Aplicação de recursos financeiros em um ativo com a expectativa de obter retorno no futuro. AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    letter: "I",
+  },
+];
+
 function App() {
   const [currentPage, setCurrentPage] = useState<"blog" | "dictionary">("blog");
 
@@ -53,7 +98,7 @@ function App() {
       {currentPage === "blog" ? (
         <Blog posts={samplePosts} tags={sampleTags} />
       ) : (
-        <Dictionary />
+        <Dictionary items={sampleDictionaryItems} />
       )}
       <Footer />
     </div>

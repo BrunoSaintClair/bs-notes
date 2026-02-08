@@ -1,65 +1,18 @@
 import { useState, useMemo } from "react";
+import type { DictionaryItem } from "../../types";
 
-interface DictionaryItem {
-  id: string;
-  term: string;
-  definition: string;
-  letter: string;
+interface DictionaryProps {
+  items: DictionaryItem[];
 }
 
-const dictionaryItems: DictionaryItem[] = [
-  {
-    id: "1",
-    term: "Ação",
-    definition:
-      "Representa uma parcela da propriedade de uma empresa. Ao comprar ações, você se torna sócio da empresa.",
-    letter: "A",
-  },
-  {
-    id: "2",
-    term: "Aporte",
-    definition:
-      "Contribuição de recursos financeiros feita por um investidor para aumentar seu investimento em uma aplicação ou fundo.",
-    letter: "A",
-  },
-  {
-    id: "3",
-    term: "Carteira",
-    definition:
-      "Conjunto de investimentos de um indivíduo ou instituição, incluindo ações, títulos e outros ativos.",
-    letter: "C",
-  },
-  {
-    id: "4",
-    term: "Dividendo",
-    definition:
-      "Parte do lucro de uma empresa que é distribuída aos acionistas como recompensa pelo investimento.",
-    letter: "D",
-  },
-  {
-    id: "5",
-    term: "Fundo de Emergência",
-    definition:
-      "Poupança reservada para cobrir despesas inesperadas ou períodos sem renda, geralmente de 3 a 6 meses.",
-    letter: "F",
-  },
-  {
-    id: "6",
-    term: "Investimento",
-    definition:
-      "Aplicação de recursos financeiros em um ativo com a expectativa de obter retorno no futuro aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.",
-    letter: "I",
-  }
-];
-
-export default function Dictionary() {
+export default function Dictionary({ items }: DictionaryProps) {
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
   const filteredItems = useMemo(() => {
-    let filtered = dictionaryItems;
+    let filtered = items;
 
     if (selectedLetter) {
       filtered = filtered.filter((item) => item.letter === selectedLetter);
@@ -74,7 +27,7 @@ export default function Dictionary() {
     }
 
     return filtered;
-  }, [selectedLetter, searchQuery]);
+  }, [items, selectedLetter, searchQuery]);
 
   return (
     <main className="flex-1 max-w-4xl mx-auto px-6 py-12 w-full">

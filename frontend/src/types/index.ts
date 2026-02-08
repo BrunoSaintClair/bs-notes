@@ -11,3 +11,10 @@ export interface Post {
   tags: Tag[];
   date: string;
 }
+
+export interface DictionaryItem {
+  id: string;
+  term: string;
+  definition: string;
+  letter: string;
+}
