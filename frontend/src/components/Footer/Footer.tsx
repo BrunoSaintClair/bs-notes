@@ -4,8 +4,8 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-bg-primary py-8 px-6">
-      <div className="max-w-6xl mx-auto flex items-center justify-center gap-96">
+    <footer className="bg-bg-primary py-8 px-6 border-t border-gray-200">
+      <div className="max-w-6xl mx-auto flex items-center justify-between">
         <p className="text-gray-500 text-sm">
           &copy; {currentYear} Bruno Saint Clair.
         </p>
