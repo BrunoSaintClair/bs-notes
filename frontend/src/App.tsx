@@ -3,6 +3,7 @@ import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Blog from "./components/Blog/Blog";
 import Dictionary from "./components/Dictionary/Dictionary";
+import About from "./components/About/About";
 import type { Post, Tag, DictionaryItem } from "./types";
 
 const sampleTags: Tag[] = [
@@ -84,22 +85,30 @@ const sampleDictionaryItems: DictionaryItem[] = [
     id: "6",
     term: "Investimento",
     definition:
-      "Aplicação de recursos financeiros em um ativo com a expectativa de obter retorno no futuro. AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "Aplicação de recursos financeiros em um ativo com a expectativa de obter retorno no futuro.",
     letter: "I",
   },
 ];
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<"blog" | "dictionary">("blog");
+  const [currentPage, setCurrentPage] = useState<"blog" | "dictionary" | "about">("blog");
 
   return (
     <div className="flex flex-col min-h-screen">
       <Header currentPage={currentPage} onPageChange={setCurrentPage} />
-      {currentPage === "blog" ? (
+      
+      {currentPage === "blog" && (
         <Blog posts={samplePosts} tags={sampleTags} />
-      ) : (
+      )}
+      
+      {currentPage === "dictionary" && (
         <Dictionary items={sampleDictionaryItems} />
       )}
+
+      {currentPage === "about" && (
+        <About />
+      )}
+
       <Footer />
     </div>
   );

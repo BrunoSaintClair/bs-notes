@@ -1,6 +1,6 @@
 interface HeaderProps {
-  currentPage: "blog" | "dictionary";
-  onPageChange: (page: "blog" | "dictionary") => void;
+  currentPage: "blog" | "dictionary" | "about";
+  onPageChange: (page: "blog" | "dictionary" | "about") => void;
 }
 
 const Header = ({ currentPage, onPageChange }: HeaderProps) => {
@@ -16,7 +16,7 @@ const Header = ({ currentPage, onPageChange }: HeaderProps) => {
                             onClick={() => onPageChange("blog")}
                             className={`font-medium transition-colors cursor-pointer ${
                               currentPage === "blog"
-                                ? "text-text-primary border-b-2 border-b-sage-green pb-1"
+                                ? "text-text-primaryWyBVZXpb-2 border-b-sage-green pb-1"
                                 : "text-gray-500 hover:text-gray-600"
                             }`}
                         >
@@ -32,6 +32,16 @@ const Header = ({ currentPage, onPageChange }: HeaderProps) => {
                         >
                             Dicionário
                         </button>
+                        <button
+                            onClick={() => onPageChange("about")}
+                            className={`font-medium transition-colors cursor-pointer ${
+                              currentPage === "about"
+                                ? "text-text-primary border-b-2 border-b-sage-green pb-1"
+                                : "text-gray-500 hover:text-gray-600"
+                            }`}
+                        >
+                            Sobre
+                        </button>
                     </nav>
                 </div>
                 <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100 transition-colors shadow-md">
@@ -46,7 +56,6 @@ const Header = ({ currentPage, onPageChange }: HeaderProps) => {
             </div>
         </header>
     )
-
 }
 
 export default Header;
