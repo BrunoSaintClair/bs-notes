@@ -1,5 +1,92 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from typing import List
+from uuid import UUID
+
 from database import get_db
+import models
+import schemas
+from dependencies import verify_admin 
 
 router = APIRouter()
+
+@router.get("/", response_model=List[schemas.PostResponse])
+def get_all(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    posts = db.query(models.Post).offset(skip).limit(limit).all()
+    return posts
+
+@router.get("/{post_id}", response_model=schemas.PostResponse)
+def get_post(post_id: UUID, db: Session = Depends(get_db)):
+    post = db.query(models.Post).filter(models.Post.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post não encontrado.")
+    
+    post.views += 1
+    db.commit()
+    db.refresh(post)
+    
+    return post
+
+@router.post("/", response_model=schemas.PostResponse, status_code=status.HTTP_201_CREATED)
+def create(
+    post: schemas.PostCreate, 
+    db: Session = Depends(get_db),
+    admin_email: str = Depends(verify_admin) 
+):
+    user = db.query(models.User).filter(models.User.email == admin_email).first()
+    if not user:
+        raise HTTPException(status_code=400, detail="Admin não encontrado. Faça login antes.")
+
+    new_post = models.Post(
+        title=post.title,
+        description=post.description,
+        image=post.image,
+        date=post.date,
+        user_id=user.id
+    )
+    
+    if post.tag_ids:
+        tags = db.query(models.Tag).filter(models.Tag.id.in_(post.tag_ids)).all()
+        new_post.tags = tags
+
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
+    return new_post
+
+@router.put("/{post_id}", response_model=schemas.PostResponse)
+def update(
+    post_id: UUID, 
+    post_update: schemas.PostCreate, 
+    db: Session = Depends(get_db),
+    admin_email: str = Depends(verify_admin) 
+):
+    post = db.query(models.Post).filter(models.Post.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post não encontrado.")
+    
+    post.title = post_update.title
+    post.description = post_update.description
+    post.image = post_update.image
+    post.date = post_update.date
+    
+    if post_update.tag_ids is not None:
+        tags = db.query(models.Tag).filter(models.Tag.id.in_(post_update.tag_ids)).all()
+        post.tags = tags
+
+    db.commit()
+    db.refresh(post)
+    return post
+
+@router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete(
+    post_id: UUID, 
+    db: Session = Depends(get_db),
+    admin_email: str = Depends(verify_admin)
+):
+    post = db.query(models.Post).filter(models.Post.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post não encontrado.")
+    
+    db.delete(post)
+    db.commit()

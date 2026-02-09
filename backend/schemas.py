@@ -32,6 +32,22 @@ class DictionaryPaginatedResponse(BaseModel):
     size: int
     pages: int
 
+class PostBase(BaseModel):
+    title: str
+    description: str
+    image: str
+    date: str
+
+class PostCreate(PostBase):
+    tag_ids: List[UUID] = []
+
+class PostResponse(PostBase):
+    id: UUID
+    views: int 
+    user: Optional['UserResponse'] = None
+    tags: List[TagResponse] = []
+
+    model_config = ConfigDict(from_attributes=True)
 
 class UserBase(BaseModel):
     username: str
