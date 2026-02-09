@@ -6,11 +6,12 @@ import math
 from database import get_db
 import models
 import schemas
+from dependencies import verify_admin 
 
 router = APIRouter()
 
 @router.post("/", response_model=schemas.DictionaryItemResponse, status_code=status.HTTP_201_CREATED)
-def create(item: schemas.DictionaryItemCreate, db: Session = Depends(get_db)):
+def create(item: schemas.DictionaryItemCreate, db: Session = Depends(get_db), admin_email: str = Depends(verify_admin)):
     existing_item = db.query(models.DictionaryItem).filter(models.DictionaryItem.term == item.term).first()
     if existing_item:
         raise HTTPException(
@@ -58,7 +59,7 @@ def get_by_id(item_id: UUID, db: Session = Depends(get_db)):
     return item
 
 @router.put("/{item_id}", response_model=schemas.DictionaryItemResponse)
-def update(item_id: UUID, item_update: schemas.DictionaryItemCreate, db: Session = Depends(get_db)):
+def update(item_id: UUID, item_update: schemas.DictionaryItemCreate, db: Session = Depends(get_db), admin_email: str = Depends(verify_admin)):
     db_item = db.query(models.DictionaryItem).filter(models.DictionaryItem.id == item_id).first()
     if db_item is None:
         raise HTTPException(
@@ -83,7 +84,7 @@ def update(item_id: UUID, item_update: schemas.DictionaryItemCreate, db: Session
     return db_item
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete(item_id: UUID, db: Session = Depends(get_db)):
+def delete(item_id: UUID, db: Session = Depends(get_db), admin_email: str = Depends(verify_admin)):
     db_item = db.query(models.DictionaryItem).filter(models.DictionaryItem.id == item_id).first()
     if db_item is None:
         raise HTTPException(
