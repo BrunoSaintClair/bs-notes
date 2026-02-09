@@ -1,0 +1,51 @@
+import uuid
+from sqlalchemy import Column, String, ForeignKey, Table, Uuid, Integer
+from sqlalchemy.orm import relationship
+from database import Base
+
+post_tags = Table(
+    'post_tags',
+    Base.metadata,
+    Column('post_id', Uuid, ForeignKey('posts.id'), primary_key=True),
+    Column('tag_id', Uuid, ForeignKey('tags.id'), primary_key=True)
+)
+
+class User(Base):
+    __tablename__ = 'users'
+    
+    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
+    username = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    google_id = Column(String, unique=True, nullable=False)
+    
+    posts = relationship('Post', back_populates='user')
+
+class Tag(Base):
+    __tablename__ = 'tags'
+    
+    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
+    name = Column(String, nullable=False, unique=True)
+    
+    posts = relationship('Post', secondary=post_tags, back_populates='tags')
+
+class Post(Base):
+    __tablename__ = 'posts'
+    
+    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    image = Column(String, nullable=False)
+    date = Column(String, nullable=False)
+    views = Column(Integer, default=0)
+    user_id = Column(Uuid, ForeignKey('users.id'), nullable=False)
+    
+    user = relationship('User', back_populates='posts')
+    tags = relationship('Tag', secondary=post_tags, back_populates='posts')
+
+class DictionaryItem(Base):
+    __tablename__ = 'dictionary_items'
+    
+    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
+    term = Column(String, nullable=False, unique=True)
+    definition = Column(String, nullable=False)
+    letter = Column(String, nullable=False)
