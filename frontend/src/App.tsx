@@ -1,105 +1,67 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Blog from "./components/Blog/Blog";
 import Dictionary from "./components/Dictionary/Dictionary";
 import type { Post, Tag, DictionaryItem } from "./types";
-
-const sampleTags: Tag[] = [
-  { id: "1", name: "Investimentos" },
-  { id: "2", name: "Desenvolvimento de Software" },
-  { id: "3", name: "Geral" },
-];
-
-const samplePosts: Post[] = [
-  {
-    id: "1",
-    title: "Guia 2024: Ações com Alto Rendimento",
-    description:
-      "Descubra quais empresas lideram em crescimento de dividendos e como construir uma carteira",
-    image:
-      "https://images.unsplash.com/photo-1579427669519-ca3fb1351794?w=400&h=300&fit=crop",
-    tags: [sampleTags[0]],
-    date: "24 de janeiro de 2024",
-  },
-  {
-    id: "2",
-    title: "Fundo de Emergência: Quanto É o Suficiente?",
-    description:
-      "A regra dos 3-6 meses pode não ser para todos. Aprenda a calcular sua rede de segurança",
-    image:
-      "https://images.unsplash.com/photo-1543269865-cbdf26effbad?w=400&h=300&fit=crop",
-    tags: [sampleTags[1]],
-    date: "27 de janeiro de 2024",
-  },
-  {
-    id: "3",
-    title: "Estratégias de Pagamento de Dívidas",
-    description:
-      "Comparamos os métodos snowball e avalanche para eliminar dívidas e reconstruir sua saúde",
-    image:
-      "https://images.unsplash.com/photo-1565373315234-82b98a01a7d5?w=400&h=300&fit=crop",
-    tags: [sampleTags[2]],
-    date: "15 de janeiro de 2024",
-  },
-];
-
-const sampleDictionaryItems: DictionaryItem[] = [
-  {
-    id: "1",
-    term: "Ação",
-    definition:
-      "Representa uma parcela da propriedade de uma empresa. Ao comprar ações, você se torna sócio da empresa.",
-    letter: "A",
-  },
-  {
-    id: "2",
-    term: "Aporte",
-    definition:
-      "Contribuição de recursos financeiros feita por um investidor para aumentar seu investimento em uma aplicação ou fundo.",
-    letter: "A",
-  },
-  {
-    id: "3",
-    term: "Carteira",
-    definition:
-      "Conjunto de investimentos de um indivíduo ou instituição, incluindo ações, títulos e outros ativos.",
-    letter: "C",
-  },
-  {
-    id: "4",
-    term: "Dividendo",
-    definition:
-      "Parte do lucro de uma empresa que é distribuída aos acionistas como recompensa pelo investimento.",
-    letter: "D",
-  },
-  {
-    id: "5",
-    term: "Fundo de Emergência",
-    definition:
-      "Poupança reservada para cobrir despesas inesperadas ou períodos sem renda, geralmente de 3 a 6 meses.",
-    letter: "F",
-  },
-  {
-    id: "6",
-    term: "Investimento",
-    definition:
-      "Aplicação de recursos financeiros em um ativo com a expectativa de obter retorno no futuro. AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    letter: "I",
-  },
-];
+import { api } from "./services/api";
 
 function App() {
   const [currentPage, setCurrentPage] = useState<"blog" | "dictionary">("blog");
+  
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [dictionaryItems, setDictionaryItems] = useState<DictionaryItem[]>([]);
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [postsData, tagsData, dictionaryData] = await Promise.all([
+          api.getPosts(),
+          api.getTags(),
+          api.getDictionaryItems(),
+        ]);
+
+        setPosts(postsData);
+        setTags(tagsData);
+        setDictionaryItems(dictionaryData);
+      } catch (err) {
+        console.error(err);
+        setError("Erro ao carregar dados ou não existem dados cadastrados.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
       <Header currentPage={currentPage} onPageChange={setCurrentPage} />
-      {currentPage === "blog" ? (
-        <Blog posts={samplePosts} tags={sampleTags} />
+      
+      {isLoading ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-500">Carregando...</p>
+        </div>
+      ) : error ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-700">{error}</p>
+        </div>
       ) : (
-        <Dictionary items={sampleDictionaryItems} />
+        <>
+          {currentPage === "blog" ? (
+            <Blog posts={posts} tags={tags} />
+          ) : (
+            <Dictionary items={dictionaryItems} />
+          )}
+        </>
       )}
+      
       <Footer />
     </div>
   );
