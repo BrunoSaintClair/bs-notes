@@ -13,13 +13,22 @@ function App() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [dictionaryItems, setDictionaryItems] = useState<DictionaryItem[]>([]);
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const handleLoginSuccess = (userData: User) => {
     setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
   };
 
   useEffect(() => {
@@ -48,7 +57,7 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header currentPage={currentPage} onPageChange={setCurrentPage} user={user} onLoginSuccess={handleLoginSuccess} />
+      <Header currentPage={currentPage} onPageChange={setCurrentPage} user={user} onLoginSuccess={handleLoginSuccess} onLogout={handleLogout} />
       
       {isLoading ? (
         <div className="flex-1 flex items-center justify-center">

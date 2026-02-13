@@ -7,9 +7,10 @@ interface HeaderProps {
   onPageChange: (page: "blog" | "dictionary") => void;
   user: User | null;
   onLoginSuccess: (user: User) => void;
+  onLogout: () => void;
 }
 
-const Header = ({ currentPage, onPageChange, user, onLoginSuccess }: HeaderProps) => {
+const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: HeaderProps) => {
     const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
         if (credentialResponse.credential) {
             try {
@@ -62,6 +63,12 @@ const Header = ({ currentPage, onPageChange, user, onLoginSuccess }: HeaderProps
                             <span className="text-gray-700 font-medium text-sm">
                                 {user.username}
                             </span>
+                            <button 
+                                onClick={onLogout}
+                                className="ml-2 text-xs text-red-500 hover:text-red-700 hover:underline cursor-pointer"
+                            >
+                                Sair
+                            </button>
                         </div>
                     ) : (
                         <div className="shadow-md rounded-md overflow-hidden">
