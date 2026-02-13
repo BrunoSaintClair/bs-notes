@@ -1,4 +1,4 @@
-import type { Post, Tag, DictionaryItem } from "../types";
+import type { Post, Tag, DictionaryItem, User } from "../types";
 
 const API_URL = import.meta.env.API_URL || "http://localhost:8000";
 
@@ -20,6 +20,21 @@ export const api = {
     if (!response.ok) throw new Error("Erro buscando itens do dicionário");
     const data = await response.json();
     return data.items; 
+  },
+
+  loginGoogle: async (token: string): Promise<User> => {
+    const response = await fetch(`${API_URL}/users/auth/google`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Falha no login com Google");
+    }
+    return response.json();
   }
 
 };

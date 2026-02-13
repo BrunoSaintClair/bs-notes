@@ -3,7 +3,7 @@ import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Blog from "./components/Blog/Blog";
 import Dictionary from "./components/Dictionary/Dictionary";
-import type { Post, Tag, DictionaryItem } from "./types";
+import type { Post, Tag, DictionaryItem, User } from "./types";
 import { api } from "./services/api";
 
 function App() {
@@ -12,9 +12,15 @@ function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [dictionaryItems, setDictionaryItems] = useState<DictionaryItem[]>([]);
+
+  const [user, setUser] = useState<User | null>(null);
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleLoginSuccess = (userData: User) => {
+    setUser(userData);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,7 +48,7 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header currentPage={currentPage} onPageChange={setCurrentPage} />
+      <Header currentPage={currentPage} onPageChange={setCurrentPage} user={user} onLoginSuccess={handleLoginSuccess} />
       
       {isLoading ? (
         <div className="flex-1 flex items-center justify-center">

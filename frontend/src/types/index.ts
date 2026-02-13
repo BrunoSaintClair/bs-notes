@@ -18,3 +18,9 @@ export interface DictionaryItem {
   definition: string;
   letter: string;
 }
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+}
