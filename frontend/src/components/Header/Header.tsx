@@ -3,8 +3,8 @@ import { api } from '../../services/api';
 import type { User } from '../../types';
 
 interface HeaderProps {
-  currentPage: "blog" | "dictionary";
-  onPageChange: (page: "blog" | "dictionary") => void;
+  currentPage: "blog" | "dictionary" | "about";
+  onPageChange: (page: "blog" | "dictionary" | "about") => void;
   user: User | null;
   onLoginSuccess: (user: User) => void;
   onLogout: () => void;
@@ -50,6 +50,16 @@ const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: H
                             }`}
                         >
                             Dicionário
+                        </button>
+                        <button
+                            onClick={() => onPageChange("about")}
+                            className={`font-medium transition-colors cursor-pointer ${
+                              currentPage === "about"
+                                ? "text-text-primary border-b-2 border-b-sage-green pb-1"
+                                : "text-gray-500 hover:text-gray-600"
+                            }`}
+                        >
+                            Sobre
                         </button>
                     </nav>
                 </div>

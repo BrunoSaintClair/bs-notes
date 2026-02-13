@@ -3,11 +3,12 @@ import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Blog from "./components/Blog/Blog";
 import Dictionary from "./components/Dictionary/Dictionary";
+import About from "./components/About/About";
 import type { Post, Tag, DictionaryItem, User } from "./types";
 import { api } from "./services/api";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<"blog" | "dictionary">("blog");
+  const [currentPage, setCurrentPage] = useState<"blog" | "dictionary" | "about" >("blog");
   
   const [posts, setPosts] = useState<Post[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -69,11 +70,11 @@ function App() {
         </div>
       ) : (
         <>
-          {currentPage === "blog" ? (
-            <Blog posts={posts} tags={tags} />
-          ) : (
-            <Dictionary items={dictionaryItems} />
-          )}
+          {currentPage === "blog" ?
+          ( <Blog posts={posts} tags={tags} /> ) 
+          : currentPage === "dictionary" ?
+          ( <Dictionary items={dictionaryItems} /> ) 
+          : ( <About /> )}
         </>
       )}
       
