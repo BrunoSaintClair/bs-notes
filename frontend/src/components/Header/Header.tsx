@@ -3,19 +3,22 @@ import { api } from '../../services/api';
 import type { User } from '../../types';
 
 interface HeaderProps {
-  currentPage: "blog" | "dictionary" | "about";
-  onPageChange: (page: "blog" | "dictionary" | "about") => void;
+  currentPage: "blog" | "dictionary" | "about" | "admin";
+  onPageChange: (page: "blog" | "dictionary" | "about" | "admin") => void;
   user: User | null;
-  onLoginSuccess: (user: User) => void;
+  onLoginSuccess: (user: User, token: string) => void;
   onLogout: () => void;
 }
 
 const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: HeaderProps) => {
+    const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
+
     const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
         if (credentialResponse.credential) {
             try {
-                const user = await api.loginGoogle(credentialResponse.credential);
-                onLoginSuccess(user);
+                const token = credentialResponse.credential;
+                const user = await api.loginGoogle(token);
+                onLoginSuccess(user, token);
             } catch (error) {
                 console.error("Erro ao autenticar no backend:", error);
             }
@@ -61,6 +64,19 @@ const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: H
                         >
                             Sobre
                         </button>
+
+                        {user && user.email === ADMIN_EMAIL && (
+                            <button
+                                onClick={() => onPageChange("admin")}
+                                className={`font-medium transition-colors cursor-pointer ${
+                                currentPage === "admin"
+                                    ? "text-text-primary border-b-2 border-b-sage-green pb-1"
+                                    : "text-gray-500 hover:text-gray-600"
+                                }`}
+                            >
+                                Admin
+                            </button>
+                        )}
                     </nav>
                 </div>
 
@@ -96,7 +112,6 @@ const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: H
             </div>
         </header>
     )
-
 }
 
 export default Header;

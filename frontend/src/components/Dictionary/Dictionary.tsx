@@ -62,7 +62,7 @@ export default function Dictionary({ items }: DictionaryProps) {
           className={`px-8 py-3 rounded-lg transition-all font-bold text-sm min-w-24 ${
             selectedLetter === null
               ? "bg-gray-900 text-white border-2 border-gray-900"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              : "bg-gray-100 text-gray-700 border-2 border-gray-100 hover:bg-gray-200"
           }`}
         >
           Todos

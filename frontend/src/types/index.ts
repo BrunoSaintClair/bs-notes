@@ -24,3 +24,21 @@ export interface User {
   username: string;
   email: string;
 }
+
+export interface PostCreate {
+  title: string;
+  description: string;
+  image: string;
+  date: string;
+  tag_ids: string[];
+}
+
+export interface DictionaryItemCreate {
+  term: string;
+  definition: string;
+  letter: string;
+}
+
+export interface TagCreate {
+  name: string;
+}

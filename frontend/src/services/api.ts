@@ -1,6 +1,11 @@
-import type { Post, Tag, DictionaryItem, User } from "../types";
+import type { Post, Tag, DictionaryItem, User, PostCreate, TagCreate, DictionaryItemCreate } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL;
+
+const getAuthHeaders = (token: string) => ({
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${token}`
+});
 
 export const api = {
   getPosts: async (): Promise<Post[]> => {
@@ -35,6 +40,86 @@ export const api = {
       throw new Error("Falha no login com Google");
     }
     return response.json();
-  }
+  },
+
+  createPost: async (post: PostCreate, token: string): Promise<Post> => {
+    const response = await fetch(`${API_URL}/posts/`, {
+      method: "POST",
+      headers: getAuthHeaders(token),
+      body: JSON.stringify(post),
+    });
+    if (!response.ok) throw new Error("Erro ao criar post");
+    return response.json();
+  },
+
+  updatePost: async (id: string, post: PostCreate, token: string): Promise<Post> => {
+    const response = await fetch(`${API_URL}/posts/${id}`, {
+      method: "PUT",
+      headers: getAuthHeaders(token),
+      body: JSON.stringify(post),
+    });
+    if (!response.ok) throw new Error("Erro ao atualizar post");
+    return response.json();
+  },
+
+  deletePost: async (id: string, token: string): Promise<void> => {
+    const response = await fetch(`${API_URL}/posts/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(token),
+    });
+    if (!response.ok) throw new Error("Erro ao deletar post");
+  },
+
+  createTag: async (tag: TagCreate, token: string): Promise<Tag> => {
+    const response = await fetch(`${API_URL}/tags/`, {
+      method: "POST",
+      headers: getAuthHeaders(token),
+      body: JSON.stringify(tag),
+    });
+    if (!response.ok) {
+        if (response.status === 401) {
+            throw new Error("UNAUTHORIZED"); 
+        }
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || "Erro ao criar tag");
+    }
+    return response.json();
+  },
+
+  deleteTag: async (id: string, token: string): Promise<void> => {
+    const response = await fetch(`${API_URL}/tags/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(token),
+    });
+    if (!response.ok) throw new Error("Erro ao deletar tag");
+  },
+
+  createDictionaryItem: async (item: DictionaryItemCreate, token: string): Promise<DictionaryItem> => {
+    const response = await fetch(`${API_URL}/dictionary/`, {
+      method: "POST",
+      headers: getAuthHeaders(token),
+      body: JSON.stringify(item),
+    });
+    if (!response.ok) throw new Error("Erro ao criar item");
+    return response.json();
+  },
+
+  updateDictionaryItem: async (id: string, item: DictionaryItemCreate, token: string): Promise<DictionaryItem> => {
+    const response = await fetch(`${API_URL}/dictionary/${id}`, {
+      method: "PUT",
+      headers: getAuthHeaders(token),
+      body: JSON.stringify(item),
+    });
+    if (!response.ok) throw new Error("Erro ao atualizar item");
+    return response.json();
+  },
+
+  deleteDictionaryItem: async (id: string, token: string): Promise<void> => {
+    const response = await fetch(`${API_URL}/dictionary/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(token),
+    });
+    if (!response.ok) throw new Error("Erro ao deletar item");
+  },
 
 };
