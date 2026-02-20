@@ -27,6 +27,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
 
   const [postTitle, setPostTitle] = useState("");
   const [postDescription, setPostDescription] = useState("");
+  const [postContent, setPostContent] = useState("");
   const [postImage, setPostImage] = useState("");
   const [postDate, setPostDate] = useState(getTodayDate());
   const [postTags, setPostTags] = useState<string[]>([]);
@@ -109,6 +110,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
         {
           title: postTitle,
           description: postDescription,
+          content: postContent,
           image: postImage,
           date: postDate,
           tag_ids: postTags,
@@ -118,6 +120,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
 
       setPostTitle("");
       setPostDescription("");
+      setPostContent("");
       setPostImage("");
       setPostDate(getTodayDate());
       setPostTags([]);
@@ -189,6 +192,18 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
                   onChange={(e) => setPostDescription(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none h-24"
                   placeholder="Um breve resumo do artigo..."
+                  required
+                  disabled={isLoadingPost}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Conteúdo (Artigo)</label>
+                <textarea 
+                  value={postContent}
+                  onChange={(e) => setPostContent(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-y h-48"
+                  placeholder="Escreva o artigo completo aqui..."
                   required
                   disabled={isLoadingPost}
                 />

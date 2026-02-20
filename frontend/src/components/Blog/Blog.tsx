@@ -5,9 +5,10 @@ import PostCard from "./PostCard";
 interface BlogProps {
   posts: Post[];
   tags: Tag[];
+  onReadPost: (id: string) => void;
 }
 
-export default function Blog({ posts, tags }: BlogProps) {
+export default function Blog({ posts, tags, onReadPost }: BlogProps) {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [postsToShow, setPostsToShow] = useState<number>(5);
@@ -88,7 +89,7 @@ export default function Blog({ posts, tags }: BlogProps) {
         {filteredPosts.length > 0 ? (
           <>
             {displayedPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
+              <PostCard key={post.id} post={post} onReadMore={() => onReadPost(post.id)} />
             ))}
             {hasMorePosts && (
               <div className="flex justify-center pt-8">

@@ -35,6 +35,7 @@ class DictionaryPaginatedResponse(BaseModel):
 class PostBase(BaseModel):
     title: str
     description: str
+    content: str
     image: str
     date: str
 

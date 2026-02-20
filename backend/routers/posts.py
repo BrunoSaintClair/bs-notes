@@ -40,6 +40,7 @@ def create(
     new_post = models.Post(
         title=post.title,
         description=post.description,
+        content=post.content,
         image=post.image,
         date=post.date,
         user_id=user.id
@@ -67,6 +68,7 @@ def update(
     
     post.title = post_update.title
     post.description = post_update.description
+    post.content = post_update.content
     post.image = post_update.image
     post.date = post_update.date
     

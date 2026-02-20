@@ -6,11 +6,13 @@ import Blog from "./components/Blog/Blog";
 import Dictionary from "./components/Dictionary/Dictionary";
 import About from "./components/About/About";
 import Admin from "./components/Admin/Admin";
+import PostDetail from "./components/Blog/PostDetail";
 import type { Post, Tag, DictionaryItem, User } from "./types";
 import { api } from "./services/api";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<"blog" | "dictionary" | "about" | "admin">("blog");
+  const [currentPage, setCurrentPage] = useState<"blog" | "dictionary" | "about" | "admin" | "post">("blog");
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   
   const [posts, setPosts] = useState<Post[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -39,6 +41,7 @@ function App() {
     localStorage.removeItem("user");
     localStorage.removeItem("authToken");
     setCurrentPage("blog");
+    setSelectedPostId(null);
   };
 
   const fetchData = async (showLoading = true) => {
@@ -86,7 +89,27 @@ function App() {
         <div className="flex-1 flex items-center justify-center text-red-500">{error}</div>
       ) : (
         <>
-          {currentPage === "blog" && <Blog posts={posts} tags={tags} />}
+          {currentPage === "blog" && (
+            <Blog 
+              posts={posts} 
+              tags={tags} 
+              onReadPost={(id) => {
+                setSelectedPostId(id);
+                setCurrentPage("post");
+              }}
+            />
+          )}
+
+          {currentPage === "post" && selectedPostId && (
+            <PostDetail 
+              postId={selectedPostId} 
+              onBack={() => {
+                setSelectedPostId(null);
+                setCurrentPage("blog");
+              }} 
+            />
+          )}
+
           {currentPage === "dictionary" && <Dictionary items={dictionaryItems} />}
           {currentPage === "about" && <About />}
           

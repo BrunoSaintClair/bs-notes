@@ -34,6 +34,7 @@ class Post(Base):
     id = Column(Uuid, primary_key=True, default=uuid.uuid4)
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
+    content = Column(String, nullable=False, default="")
     image = Column(String, nullable=False)
     date = Column(String, nullable=False)
     views = Column(Integer, default=0)

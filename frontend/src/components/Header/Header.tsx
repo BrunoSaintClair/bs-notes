@@ -3,8 +3,8 @@ import { api } from '../../services/api';
 import type { User } from '../../types';
 
 interface HeaderProps {
-  currentPage: "blog" | "dictionary" | "about" | "admin";
-  onPageChange: (page: "blog" | "dictionary" | "about" | "admin") => void;
+  currentPage: "blog" | "dictionary" | "about" | "admin" | "post";
+  onPageChange: (page: "blog" | "dictionary" | "about" | "admin" | "post") => void;
   user: User | null;
   onLoginSuccess: (user: User, token: string) => void;
   onLogout: () => void;

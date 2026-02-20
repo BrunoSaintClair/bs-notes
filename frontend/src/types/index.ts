@@ -7,9 +7,11 @@ export interface Post {
   id: string;
   title: string;
   description: string;
+  content: string;
   image: string;
   tags: Tag[];
   date: string;
+  views: number;
 }
 
 export interface DictionaryItem {
@@ -28,6 +30,7 @@ export interface User {
 export interface PostCreate {
   title: string;
   description: string;
+  content: string;
   image: string;
   date: string;
   tag_ids: string[];

@@ -14,6 +14,12 @@ export const api = {
     return response.json();
   },
 
+  getPost: async (id: string): Promise<Post> => {
+    const response = await fetch(`${API_URL}/posts/${id}`);
+    if (!response.ok) throw new Error("Erro buscando post");
+    return response.json();
+  },
+
   getTags: async (): Promise<Tag[]> => {
     const response = await fetch(`${API_URL}/tags/?limit=100`);
     if (!response.ok) throw new Error("Erro buscando tags");

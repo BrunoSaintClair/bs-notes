@@ -2,9 +2,10 @@ import type { Post } from "../../types";
 
 interface PostCardProps {
   post: Post;
+  onReadMore: () => void;
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, onReadMore }: PostCardProps) {
   return (
     <article className="flex gap-8 pb-12 mb-12 border-b border-gray-200 last:border-b-0">
       <div className="shrink-0 w-56 h-44">
@@ -28,7 +29,10 @@ export default function PostCard({ post }: PostCardProps) {
           <p className="text-xs text-gray-400 font-medium">{post.date}</p>
         </div>
 
-        <h3 className="text-2xl font-bold text-text-primary mb-4 leading-tight">
+        <h3 
+          className="text-2xl font-bold text-text-primary mb-4 leading-tight cursor-pointer hover:text-baltic-blue transition-colors"
+          onClick={onReadMore}
+        >
           {post.title}
         </h3>
 
@@ -36,12 +40,12 @@ export default function PostCard({ post }: PostCardProps) {
           {post.description}
         </p>
 
-        <a
-          href="#"
-          className="text-text-primary font-semibold text-sm hover:text-baltic-blue transition-colors inline-block"
+        <button
+          onClick={onReadMore}
+          className="text-text-primary font-semibold text-sm hover:text-baltic-blue transition-colors inline-block cursor-pointer"
         >
           Ler artigo →
-        </a>
+        </button>
       </div>
     </article>
   );
