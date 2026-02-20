@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, ForeignKey, Table, Uuid, Integer
+from sqlalchemy import Column, String, ForeignKey, Table, Uuid, Integer, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -38,6 +38,7 @@ class Post(Base):
     image = Column(String, nullable=False)
     date = Column(String, nullable=False)
     views = Column(Integer, default=0)
+    is_public = Column(Boolean, default=True)
     user_id = Column(Uuid, ForeignKey('users.id'), nullable=False)
     
     user = relationship('User', back_populates='posts')

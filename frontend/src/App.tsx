@@ -49,8 +49,10 @@ function App() {
       if (showLoading) {
         setIsLoading(true);
       }
+      const postsPromise = token ? api.getAdminPosts(token) : api.getPosts();
+
       const [postsData, tagsData, dictionaryData] = await Promise.all([
-        api.getPosts(),
+        postsPromise,
         api.getTags(),
         api.getDictionaryItems(),
       ]);
@@ -91,7 +93,7 @@ function App() {
         <>
           {currentPage === "blog" && (
             <Blog 
-              posts={posts} 
+              posts={posts.filter((p) => p.is_public !== false)} 
               tags={tags} 
               onReadPost={(id) => {
                 setSelectedPostId(id);

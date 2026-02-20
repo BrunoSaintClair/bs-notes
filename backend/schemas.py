@@ -38,6 +38,7 @@ class PostBase(BaseModel):
     content: str
     image: str
     date: str
+    is_public: bool = True
 
 class PostCreate(PostBase):
     tag_ids: List[UUID] = []

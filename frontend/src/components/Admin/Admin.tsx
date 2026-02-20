@@ -31,6 +31,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
   const [postImage, setPostImage] = useState("");
   const [postDate, setPostDate] = useState(getTodayDate());
   const [postTags, setPostTags] = useState<string[]>([]);
+  const [postIsPublic, setPostIsPublic] = useState(true);
   const [isLoadingPost, setIsLoadingPost] = useState(false);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
 
@@ -42,6 +43,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
     setPostImage(post.image);
     setPostDate(post.date);
     setPostTags(post.tags.map(t => t.id));
+    setPostIsPublic(post.is_public !== undefined ? post.is_public : true);
     setActiveTab("posts");
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -54,6 +56,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
     setPostImage("");
     setPostDate(getTodayDate());
     setPostTags([]);
+    setPostIsPublic(true);
   };
 
   
@@ -142,6 +145,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
         image: postImage,
         date: postDate,
         tag_ids: postTags,
+        is_public: postIsPublic,
       };
 
       if (editingPostId) {
@@ -291,6 +295,20 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
                 )}
               </div>
 
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  id="is_public"
+                  checked={postIsPublic}
+                  onChange={(e) => setPostIsPublic(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                  disabled={isLoadingPost}
+                />
+                <label htmlFor="is_public" className="text-sm font-medium text-gray-700 cursor-pointer">
+                  Tornar post público e visível na Home
+                </label>
+              </div>
+
               <div className="flex gap-4 mt-2">
                 <button 
                   type="submit" 
@@ -337,7 +355,14 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
                         className="w-20 h-20 object-cover rounded bg-gray-200 shrink-0"
                       />
                       <div className="flex-1 pr-8">
-                        <h3 className="text-md font-bold text-gray-900 leading-tight">{post.title}</h3>
+                        <h3 className="text-md font-bold text-gray-900 leading-tight">
+                          {post.title}
+                          {post.is_public === false && (
+                            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-800 uppercase">
+                              Privado
+                            </span>
+                          )}
+                        </h3>
                         <p className="text-xs text-gray-500 mt-1">
                           {post.date.split('-').reverse().join('/')}
                         </p>

@@ -12,6 +12,7 @@ export interface Post {
   tags: Tag[];
   date: string;
   views: number;
+  is_public: boolean;
 }
 
 export interface DictionaryItem {
@@ -34,6 +35,7 @@ export interface PostCreate {
   image: string;
   date: string;
   tag_ids: string[];
+  is_public: boolean;
 }
 
 export interface DictionaryItemCreate {

@@ -14,6 +14,14 @@ export const api = {
     return response.json();
   },
 
+  getAdminPosts: async (token: string): Promise<Post[]> => {
+    const response = await fetch(`${API_URL}/posts/admin?limit=100`, {
+      headers: getAuthHeaders(token),
+    });
+    if (!response.ok) throw new Error("Erro buscando todos os posts para admin");
+    return response.json();
+  },
+
   getPost: async (id: string): Promise<Post> => {
     const response = await fetch(`${API_URL}/posts/${id}`);
     if (!response.ok) throw new Error("Erro buscando post");
