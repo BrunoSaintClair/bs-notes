@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaTrash, FaPlus } from "react-icons/fa";
+import { FaTrash, FaPlus, FaEdit, FaTimes } from "react-icons/fa";
 import type { Post, Tag, DictionaryItem } from "../../types";
 import { api } from "../../services/api";
 
@@ -32,6 +32,29 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
   const [postDate, setPostDate] = useState(getTodayDate());
   const [postTags, setPostTags] = useState<string[]>([]);
   const [isLoadingPost, setIsLoadingPost] = useState(false);
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+
+  const handleEditClick = (post: Post) => {
+    setEditingPostId(post.id);
+    setPostTitle(post.title);
+    setPostDescription(post.description);
+    setPostContent(post.content);
+    setPostImage(post.image);
+    setPostDate(post.date);
+    setPostTags(post.tags.map(t => t.id));
+    setActiveTab("posts");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const resetPostForm = () => {
+    setEditingPostId(null);
+    setPostTitle("");
+    setPostDescription("");
+    setPostContent("");
+    setPostImage("");
+    setPostDate(getTodayDate());
+    setPostTags([]);
+  };
 
   
   const handleCreateTag = async (e: React.FormEvent) => {
@@ -102,32 +125,36 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!postTitle.trim() || !postDescription.trim() || !postImage.trim() || !postDate) return;
+    if (!postTitle.trim() || !postDescription.trim() || !postContent.trim() || !postImage.trim() || !postDate) return;
+
+    if (postTags.length === 0) {
+      alert("Por favor, selecione pelo menos uma tag para o post.");
+      return;
+    }
 
     try {
       setIsLoadingPost(true);
-      await api.createPost(
-        {
-          title: postTitle,
-          description: postDescription,
-          content: postContent,
-          image: postImage,
-          date: postDate,
-          tag_ids: postTags,
-        },
-        token
-      );
+      
+      const payload = {
+        title: postTitle,
+        description: postDescription,
+        content: postContent,
+        image: postImage,
+        date: postDate,
+        tag_ids: postTags,
+      };
 
-      setPostTitle("");
-      setPostDescription("");
-      setPostContent("");
-      setPostImage("");
-      setPostDate(getTodayDate());
-      setPostTags([]);
+      if (editingPostId) {
+        await api.updatePost(editingPostId, payload, token);
+      } else {
+        await api.createPost(payload, token);
+      }
+
+      resetPostForm();
       refreshData();
     } catch (error) {
       console.error(error);
-      alert("Erro ao criar o post.");
+      alert(editingPostId ? "Erro ao atualizar o post." : "Erro ao criar o post.");
     } finally {
       setIsLoadingPost(false);
     }
@@ -168,7 +195,11 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
           
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 h-fit">
             <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-              <FaPlus className="text-sm" /> Novo Post
+              {editingPostId ? (
+                <><FaEdit className="text-sm" /> Editar Post</>
+              ) : (
+                <><FaPlus className="text-sm" /> Novo Post</>
+              )}
             </h2>
             <form onSubmit={handleCreatePost} className="flex flex-col gap-4">
               
@@ -260,13 +291,26 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
                 )}
               </div>
 
-              <button 
-                type="submit" 
-                disabled={isLoadingPost}
-                className={`mt-2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors cursor-pointer flex items-center justify-center gap-2 ${isLoadingPost ? "opacity-50 cursor-not-allowed" : ""}`}
-              >
-                {isLoadingPost ? "Publicando..." : "Publicar Post"}
-              </button>
+              <div className="flex gap-4 mt-2">
+                <button 
+                  type="submit" 
+                  disabled={isLoadingPost}
+                  className={`flex-1 ${editingPostId ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'} text-white font-bold py-2 px-4 rounded transition-colors cursor-pointer flex items-center justify-center gap-2 ${isLoadingPost ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  {isLoadingPost ? "Salvando..." : (editingPostId ? "Atualizar Post" : "Publicar Post")}
+                </button>
+
+                {editingPostId && (
+                  <button 
+                    type="button" 
+                    onClick={resetPostForm}
+                    disabled={isLoadingPost}
+                    className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <FaTimes /> Cancelar
+                  </button>
+                )}
+              </div>
             </form>
           </div>
 
@@ -294,7 +338,9 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
                       />
                       <div className="flex-1 pr-8">
                         <h3 className="text-md font-bold text-gray-900 leading-tight">{post.title}</h3>
-                        <p className="text-xs text-gray-500 mt-1">{post.date}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {post.date.split('-').reverse().join('/')}
+                        </p>
                         <div className="flex flex-wrap gap-1 mt-2">
                           {post.tags.map(tag => (
                             <span key={tag.id} className="text-[10px] font-bold uppercase text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
@@ -304,13 +350,22 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
                         </div>
                       </div>
                       
-                      <button 
-                        onClick={() => handleDeletePost(post.id)}
-                        className="absolute top-2 right-2 text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors cursor-pointer"
-                        title="Excluir post"
-                      >
-                        <FaTrash />
-                      </button>
+                      <div className="absolute top-2 right-2 flex gap-2">
+                        <button 
+                          onClick={() => handleEditClick(post)}
+                          className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-2 rounded-full transition-colors cursor-pointer"
+                          title="Editar post"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button 
+                          onClick={() => handleDeletePost(post.id)}
+                          className="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors cursor-pointer"
+                          title="Excluir post"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ul>

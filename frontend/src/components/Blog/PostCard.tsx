@@ -26,7 +26,9 @@ export default function PostCard({ post, onReadMore }: PostCardProps) {
               <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
             </>
           )}
-          <p className="text-xs text-gray-400 font-medium">{post.date}</p>
+          <p className="text-xs text-gray-400 font-medium">
+            {post.date.split('-').reverse().join('/')}
+          </p>
         </div>
 
         <h3 

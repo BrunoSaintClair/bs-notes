@@ -37,6 +37,9 @@ def create(
     if not user:
         raise HTTPException(status_code=400, detail="Admin não encontrado. Faça login antes.")
 
+    if not post.tag_ids or len(post.tag_ids) == 0:
+        raise HTTPException(status_code=400, detail="Pelo menos uma tag é obrigatória.")
+
     new_post = models.Post(
         title=post.title,
         description=post.description,
@@ -65,6 +68,9 @@ def update(
     post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if not post:
         raise HTTPException(status_code=404, detail="Post não encontrado.")
+    
+    if post_update.tag_ids is not None and len(post_update.tag_ids) == 0:
+        raise HTTPException(status_code=400, detail="Pelo menos uma tag é obrigatória.")
     
     post.title = post_update.title
     post.description = post_update.description

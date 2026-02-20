@@ -65,7 +65,7 @@ export default function PostDetail({ postId, onBack }: PostDetailProps) {
         </h1>
 
         <p className="text-sm text-gray-500 font-medium mb-8">
-          Publicado em {post.date}
+          Publicado em {post.date.split('-').reverse().join('/')}
         </p>
         
         <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed italic">

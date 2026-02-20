@@ -26,7 +26,9 @@ export default function Blog({ posts, tags, onReadPost }: BlogProps) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (post) =>
-          post.title.toLowerCase().includes(query)
+          post.title.toLowerCase().includes(query) ||
+          post.description.toLowerCase().includes(query) ||
+          post.content.toLowerCase().includes(query)
       );
     }
 
