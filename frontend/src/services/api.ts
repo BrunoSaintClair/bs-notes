@@ -2,10 +2,23 @@ import type { Post, Tag, DictionaryItem, User, PostCreate, TagCreate, Dictionary
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+export class AuthExpiredError extends Error {
+  constructor(message = "Sessão expirada. Faça login novamente.") {
+    super(message);
+    this.name = "AuthExpiredError";
+  }
+}
+
 const getAuthHeaders = (token: string) => ({
   "Content-Type": "application/json",
   "Authorization": `Bearer ${token}`
 });
+
+const checkAuth = (response: Response) => {
+  if (response.status === 401 || response.status === 403) {
+    throw new AuthExpiredError();
+  }
+};
 
 export const api = {
   getPosts: async (): Promise<Post[]> => {
@@ -18,6 +31,7 @@ export const api = {
     const response = await fetch(`${API_URL}/posts/admin?limit=100`, {
       headers: getAuthHeaders(token),
     });
+    checkAuth(response);
     if (!response.ok) throw new Error("Erro buscando todos os posts para admin");
     return response.json();
   },
@@ -41,7 +55,7 @@ export const api = {
     return data.items; 
   },
 
-  loginGoogle: async (token: string): Promise<User> => {
+  loginGoogle: async (token: string): Promise<{ user: User; access_token: string }> => {
     const response = await fetch(`${API_URL}/users/auth/google`, {
       method: "POST",
       headers: {
@@ -62,6 +76,7 @@ export const api = {
       headers: getAuthHeaders(token),
       body: JSON.stringify(post),
     });
+    checkAuth(response);
     if (!response.ok) throw new Error("Erro ao criar post");
     return response.json();
   },
@@ -72,6 +87,7 @@ export const api = {
       headers: getAuthHeaders(token),
       body: JSON.stringify(post),
     });
+    checkAuth(response);
     if (!response.ok) throw new Error("Erro ao atualizar post");
     return response.json();
   },
@@ -81,6 +97,7 @@ export const api = {
       method: "DELETE",
       headers: getAuthHeaders(token),
     });
+    checkAuth(response);
     if (!response.ok) throw new Error("Erro ao deletar post");
   },
 
@@ -90,12 +107,10 @@ export const api = {
       headers: getAuthHeaders(token),
       body: JSON.stringify(tag),
     });
+    checkAuth(response);
     if (!response.ok) {
-        if (response.status === 401) {
-            throw new Error("UNAUTHORIZED"); 
-        }
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || "Erro ao criar tag");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || "Erro ao criar tag");
     }
     return response.json();
   },
@@ -105,6 +120,7 @@ export const api = {
       method: "DELETE",
       headers: getAuthHeaders(token),
     });
+    checkAuth(response);
     if (!response.ok) throw new Error("Erro ao deletar tag");
   },
 
@@ -114,6 +130,7 @@ export const api = {
       headers: getAuthHeaders(token),
       body: JSON.stringify(item),
     });
+    checkAuth(response);
     if (!response.ok) throw new Error("Erro ao criar item");
     return response.json();
   },
@@ -124,6 +141,7 @@ export const api = {
       headers: getAuthHeaders(token),
       body: JSON.stringify(item),
     });
+    checkAuth(response);
     if (!response.ok) throw new Error("Erro ao atualizar item");
     return response.json();
   },
@@ -133,6 +151,7 @@ export const api = {
       method: "DELETE",
       headers: getAuthHeaders(token),
     });
+    checkAuth(response);
     if (!response.ok) throw new Error("Erro ao deletar item");
   },
 

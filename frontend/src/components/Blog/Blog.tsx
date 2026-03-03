@@ -41,7 +41,7 @@ export default function Blog({ posts, tags, onReadPost }: BlogProps) {
   return (
     <main className="flex-1 max-w-4xl mx-auto px-6 py-12 w-full">
       <div className="flex items-center justify-between gap-6 mb-8 pb-6 border-b border-gray-200">
-        <div className="flex gap-8 overflow-x-auto">
+        <div className="flex gap-8 overflow-x-auto custom-scrollbar pb-2">
           <button
             onClick={() => setSelectedTag(null)}
             className={`px-1 py-2 font-medium whitespace-nowrap transition-colors border-b-2 cursor-pointer ${
@@ -97,9 +97,15 @@ export default function Blog({ posts, tags, onReadPost }: BlogProps) {
               <div className="flex justify-center pt-8">
                 <button
                   onClick={() => setPostsToShow(postsToShow + 5)}
-                  className="px-6 py-2 text-sage-green font-medium hover:text-baltic-blue transition-colors border-b-2 border-b-sage-green hover:border-b-baltic-blue"
+                  className="group flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:text-blue-600 transition-all shadow-sm cursor-pointer"
                 >
                   Ver mais artigos
+                  <svg 
+                    className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" 
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
                 </button>
               </div>
             )}

@@ -61,3 +61,7 @@ class GoogleLoginRequest(BaseModel):
 class UserResponse(UserBase):
     id: UUID
     model_config = ConfigDict(from_attributes=True)
+
+class LoginResponse(BaseModel):
+    user: UserResponse
+    access_token: str

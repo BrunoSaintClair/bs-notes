@@ -1,20 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaTrash, FaPlus, FaEdit, FaTimes } from "react-icons/fa";
 import type { Post, Tag, DictionaryItem } from "../../types";
-import { api } from "../../services/api";
+import { api, AuthExpiredError } from "../../services/api";
 
 interface AdminProps {
   token: string;
-  posts: Post[];
   tags: Tag[];
   dictionaryItems: DictionaryItem[];
   refreshData: () => void;
+  onSessionExpired: () => void;
 }
 
 type Tab = "posts" | "tags" | "dictionary";
 
-export default function Admin({ token, posts, tags, dictionaryItems, refreshData }: AdminProps) {
+export default function Admin({ token, tags, dictionaryItems, refreshData, onSessionExpired }: AdminProps) {
   const getTodayDate = () => new Date().toISOString().split("T")[0];
+
+  const [adminPosts, setAdminPosts] = useState<Post[]>([]);
+  const [isLoadingAdminPosts, setIsLoadingAdminPosts] = useState(true);
+
 
   const [activeTab, setActiveTab] = useState<Tab>("posts");
 
@@ -34,6 +38,34 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
   const [postIsPublic, setPostIsPublic] = useState(true);
   const [isLoadingPost, setIsLoadingPost] = useState(false);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
+
+  const fetchAdminPosts = useCallback(async () => {
+    try {
+      setIsLoadingAdminPosts(true);
+      const data = await api.getAdminPosts(token);
+      setAdminPosts(data);
+    } catch (error) {
+      if (error instanceof AuthExpiredError) {
+        onSessionExpired();
+        return;
+      }
+      console.error(error);
+    } finally {
+      setIsLoadingAdminPosts(false);
+    }
+  }, [token, onSessionExpired]);
+
+  useEffect(() => {
+    fetchAdminPosts();
+  }, [fetchAdminPosts]);
+
+  const handleAuthError = (error: unknown) => {
+    if (error instanceof AuthExpiredError) {
+      onSessionExpired();
+      return true;
+    }
+    return false;
+  };
 
   const handleEditClick = (post: Post) => {
     setEditingPostId(post.id);
@@ -71,6 +103,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
       setTagName("");
       refreshData();
     } catch (error) {
+      if (handleAuthError(error)) return;
       console.error(error);
     } finally {
       setIsLoadingTag(false);
@@ -82,6 +115,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
       await api.deleteTag(id, token);
       refreshData();
     } catch (error) {
+      if (handleAuthError(error)) return;
       console.error(error);
       alert("Erro ao deletar tag.");
     }
@@ -101,6 +135,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
       setDefinition("");
       refreshData();
     } catch (error) {
+      if (handleAuthError(error)) return;
       console.error(error);
       alert("Erro ao criar o termo.");
     } finally {
@@ -113,6 +148,7 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
       await api.deleteDictionaryItem(id, token);
       refreshData();
     } catch (error) {
+      if (handleAuthError(error)) return;
       console.error(error);
       alert("Erro ao deletar termo.");
     }
@@ -156,7 +192,9 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
 
       resetPostForm();
       refreshData();
+      fetchAdminPosts();
     } catch (error) {
+      if (handleAuthError(error)) return;
       console.error(error);
       alert(editingPostId ? "Erro ao atualizar o post." : "Erro ao criar o post.");
     } finally {
@@ -168,7 +206,9 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
     try {
       await api.deletePost(id, token);
       refreshData();
+      fetchAdminPosts();
     } catch (error) {
+      if (handleAuthError(error)) return;
       console.error(error);
       alert("Erro ao deletar post.");
     }
@@ -334,17 +374,21 @@ export default function Admin({ token, posts, tags, dictionaryItems, refreshData
 
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <h2 className="text-xl font-bold mb-6 text-gray-800">
-              Artigos Publicados ({posts.length})
+              Artigos Publicados ({adminPosts.length})
             </h2>
             
             <div className="max-h-125 overflow-y-auto pr-2 custom-scrollbar">
-              {posts.length === 0 ? (
+              {isLoadingAdminPosts ? (
+                <p className="text-gray-500 italic text-center py-8">
+                  Carregando posts...
+                </p>
+              ) : adminPosts.length === 0 ? (
                 <p className="text-gray-500 italic text-center py-8">
                   Nenhum post publicado ainda.
                 </p>
               ) : (
                 <ul className="space-y-4">
-                  {posts.map(post => (
+                  {adminPosts.map((post: Post) => (
                     <li 
                       key={post.id} 
                       className="flex gap-4 p-4 bg-gray-50 rounded border border-gray-100 hover:bg-gray-100 transition-colors group relative"

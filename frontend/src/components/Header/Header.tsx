@@ -16,9 +16,8 @@ const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: H
     const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
         if (credentialResponse.credential) {
             try {
-                const token = credentialResponse.credential;
-                const user = await api.loginGoogle(token);
-                onLoginSuccess(user, token);
+                const result = await api.loginGoogle(credentialResponse.credential);
+                onLoginSuccess(result.user, result.access_token);
             } catch (error) {
                 console.error("Erro ao autenticar no backend:", error);
             }

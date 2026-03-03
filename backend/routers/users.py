@@ -3,6 +3,9 @@ from sqlalchemy.orm import Session
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
+import jwt
+from datetime import datetime, timedelta, timezone
+
 import models
 import schemas
 from database import get_db
@@ -12,11 +15,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+JWT_SECRET = os.getenv("JWT_SECRET")
 
 router = APIRouter()
 
 
-@router.post("/auth/google", response_model=schemas.UserResponse)
+def create_access_token(email: str) -> str:
+    payload = {
+        "sub": email,
+        "exp": datetime.now(timezone.utc) + timedelta(hours=3),
+        "iat": datetime.now(timezone.utc),
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
+
+
+@router.post("/auth/google", response_model=schemas.LoginResponse)
 def login_with_google(request: schemas.GoogleLoginRequest, db: Session = Depends(get_db)):
     try:
         id_info = id_token.verify_oauth2_token(
@@ -48,11 +61,15 @@ def login_with_google(request: schemas.GoogleLoginRequest, db: Session = Depends
             db.commit()
             db.refresh(user)
 
-        return user
+        access_token = create_access_token(email)
+
+        return schemas.LoginResponse(
+            user=schemas.UserResponse.model_validate(user),
+            access_token=access_token,
+        )
 
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
             detail="Token google inválido ou expirado"
         )
-    

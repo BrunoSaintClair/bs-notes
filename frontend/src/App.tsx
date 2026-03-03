@@ -1,5 +1,4 @@
-// src/App.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Blog from "./components/Blog/Blog";
@@ -7,6 +6,7 @@ import Dictionary from "./components/Dictionary/Dictionary";
 import About from "./components/About/About";
 import Admin from "./components/Admin/Admin";
 import PostDetail from "./components/Blog/PostDetail";
+import Toast from "./components/Toast/Toast";
 import type { Post, Tag, DictionaryItem, User } from "./types";
 import { api } from "./services/api";
 
@@ -27,6 +27,7 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleLoginSuccess = (userData: User, rawToken: string) => {
     setUser(userData);
@@ -44,15 +45,19 @@ function App() {
     setSelectedPostId(null);
   };
 
-  const fetchData = async (showLoading = true) => {
+  const handleSessionExpired = () => {
+    handleLogout();
+    setToastMessage("Sua sessão expirou. Faça login novamente para acessar o painel administrativo.");
+  };
+
+  const fetchData = useCallback(async (showLoading = true) => {
     try {
       if (showLoading) {
         setIsLoading(true);
       }
-      const postsPromise = token ? api.getAdminPosts(token) : api.getPosts();
 
       const [postsData, tagsData, dictionaryData] = await Promise.all([
-        postsPromise,
+        api.getPosts(),
         api.getTags(),
         api.getDictionaryItems(),
       ]);
@@ -67,11 +72,11 @@ function App() {
         setIsLoading(false);
       }
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const refreshData = () => fetchData(false);
 
@@ -86,7 +91,7 @@ function App() {
       />
 
       {isLoading ? (
-        <div className="flex-1 flex items-center justify-center">Loading...</div>
+        <div className="flex-1 flex items-center justify-center">Carregando...</div>
       ) : error ? (
         <div className="flex-1 flex items-center justify-center text-red-500">{error}</div>
       ) : (
@@ -118,10 +123,10 @@ function App() {
           {currentPage === "admin" && (user && token ? (
               <Admin 
                 token={token}
-                posts={posts} 
                 tags={tags} 
                 dictionaryItems={dictionaryItems}
                 refreshData={refreshData}
+                onSessionExpired={handleSessionExpired}
               />
             ) : (
               <div className="text-center mt-10 text-red-600">Acesso Negado. Faça login como admin.</div>
@@ -131,6 +136,14 @@ function App() {
       )}
       
       <Footer />
+
+      {toastMessage && (
+        <Toast 
+          message={toastMessage} 
+          type="warning" 
+          onClose={() => setToastMessage(null)} 
+        />
+      )}
     </div>
   );
 }
