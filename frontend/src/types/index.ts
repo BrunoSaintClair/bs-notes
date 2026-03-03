@@ -8,7 +8,7 @@ export interface Post {
   title: string;
   description: string;
   content: string;
-  image: string;
+  image?: string;
   tags: Tag[];
   date: string;
   views: number;
@@ -32,7 +32,7 @@ export interface PostCreate {
   title: string;
   description: string;
   content: string;
-  image: string;
+  image?: string;
   date: string;
   tag_ids: string[];
   is_public: boolean;

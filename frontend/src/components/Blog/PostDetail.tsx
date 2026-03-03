@@ -11,6 +11,7 @@ export default function PostDetail({ postId, onBack }: PostDetailProps) {
   const [post, setPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -68,20 +69,23 @@ export default function PostDetail({ postId, onBack }: PostDetailProps) {
           Publicado em {post.date.split('-').reverse().join('/')}
         </p>
         
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed italic">
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed italic font-serif">
           {post.description}
         </p>
       </header>
 
-      <div className="w-full max-w-3xl mx-auto h-48 md:h-72 mb-12 rounded-2xl overflow-hidden shadow-lg">
-        <img 
-          src={post.image} 
-          alt={post.title} 
-          className="w-full h-full object-cover"
-        />
-      </div>
+      {post.image && !imgError && (
+        <div className="w-full max-w-3xl mx-auto h-48 md:h-72 mb-12 rounded-2xl overflow-hidden shadow-lg">
+          <img 
+            src={post.image} 
+            alt={post.title} 
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        </div>
+      )}
 
-      <div className="prose prose-lg prose-blue max-w-none text-gray-800 leading-loose whitespace-pre-wrap">
+      <div className="prose prose-lg prose-blue max-w-none text-gray-800 leading-loose whitespace-pre-wrap font-serif">
         {post.content}
       </div>
     </article>

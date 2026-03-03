@@ -36,7 +36,7 @@ class PostBase(BaseModel):
     title: str
     description: str
     content: str
-    image: str
+    image: str = ""
     date: str
     is_public: bool = True
 

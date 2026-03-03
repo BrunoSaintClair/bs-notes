@@ -35,7 +35,7 @@ class Post(Base):
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
     content = Column(String, nullable=False, default="")
-    image = Column(String, nullable=False)
+    image = Column(String, nullable=True, default="")
     date = Column(String, nullable=False)
     views = Column(Integer, default=0)
     is_public = Column(Boolean, default=True)

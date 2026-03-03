@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { FaTrash, FaPlus, FaEdit, FaTimes } from "react-icons/fa";
 import type { Post, Tag, DictionaryItem } from "../../types";
 import { api, AuthExpiredError } from "../../services/api";
+import Toast from "../Toast/Toast";
 
 interface AdminProps {
   token: string;
@@ -38,6 +39,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
   const [postIsPublic, setPostIsPublic] = useState(true);
   const [isLoadingPost, setIsLoadingPost] = useState(false);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: "error" | "warning" } | null>(null);
 
   const fetchAdminPosts = useCallback(async () => {
     try {
@@ -72,7 +74,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
     setPostTitle(post.title);
     setPostDescription(post.description);
     setPostContent(post.content);
-    setPostImage(post.image);
+    setPostImage(post.image ?? "");
     setPostDate(post.date);
     setPostTags(post.tags.map(t => t.id));
     setPostIsPublic(post.is_public !== undefined ? post.is_public : true);
@@ -117,7 +119,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
     } catch (error) {
       if (handleAuthError(error)) return;
       console.error(error);
-      alert("Erro ao deletar tag.");
+      setToast({ message: "Erro ao deletar tag.", type: "error" });
     }
   };
 
@@ -137,7 +139,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
     } catch (error) {
       if (handleAuthError(error)) return;
       console.error(error);
-      alert("Erro ao criar o termo.");
+      setToast({ message: "Erro ao criar o termo.", type: "error" });
     } finally {
       setIsLoadingDictionary(false);
     }
@@ -150,7 +152,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
     } catch (error) {
       if (handleAuthError(error)) return;
       console.error(error);
-      alert("Erro ao deletar termo.");
+      setToast({ message: "Erro ao deletar termo.", type: "error" });
     }
   };
 
@@ -164,10 +166,10 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!postTitle.trim() || !postDescription.trim() || !postContent.trim() || !postImage.trim() || !postDate) return;
+    if (!postTitle.trim() || !postDescription.trim() || !postContent.trim() || !postDate) return;
 
     if (postTags.length === 0) {
-      alert("Por favor, selecione pelo menos uma tag para o post.");
+      setToast({ message: "Por favor, selecione pelo menos uma tag para o post.", type: "warning" });
       return;
     }
 
@@ -196,7 +198,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
     } catch (error) {
       if (handleAuthError(error)) return;
       console.error(error);
-      alert(editingPostId ? "Erro ao atualizar o post." : "Erro ao criar o post.");
+      setToast({ message: editingPostId ? "Erro ao atualizar o post." : "Erro ao criar o post.", type: "error" });
     } finally {
       setIsLoadingPost(false);
     }
@@ -210,7 +212,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
     } catch (error) {
       if (handleAuthError(error)) return;
       console.error(error);
-      alert("Erro ao deletar post.");
+      setToast({ message: "Erro ao deletar post.", type: "error" });
     }
   };
 
@@ -292,8 +294,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
                     value={postImage}
                     onChange={(e) => setPostImage(e.target.value)}
                     className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                    placeholder="https://exemplo.com/imagem.jpg"
-                    required
+                    placeholder="https://exemplo.com/imagem.jpg (opcional)"
                     disabled={isLoadingPost}
                   />
                 </div>
@@ -591,6 +592,13 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
             </div>
           </div>
         </div>
+      )}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );
