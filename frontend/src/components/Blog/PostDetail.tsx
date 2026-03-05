@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import type { Post } from "../../types";
 import { api } from "../../services/api";
+import PostInteractions from "./PostInteractions";
 
 interface PostDetailProps {
   postId: string;
   onBack: () => void;
+  isAdmin?: boolean;
+  isLoggedIn?: boolean;
+  token?: string | null;
+  onLoginRequired?: () => void;
 }
 
-export default function PostDetail({ postId, onBack }: PostDetailProps) {
+export default function PostDetail({ postId, onBack, isAdmin = false, isLoggedIn = false, token, onLoginRequired }: PostDetailProps) {
   const [post, setPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,6 +22,9 @@ export default function PostDetail({ postId, onBack }: PostDetailProps) {
     const fetchPost = async () => {
       try {
         setIsLoading(true);
+        if (isLoggedIn && token) {
+          api.registerView(postId, token).catch(console.error);
+        }
         const data = await api.getPost(postId);
         setPost(data);
       } catch (err) {
@@ -28,7 +36,7 @@ export default function PostDetail({ postId, onBack }: PostDetailProps) {
     };
 
     fetchPost();
-  }, [postId]);
+  }, [postId, isLoggedIn, token]);
 
   if (isLoading) {
     return <div className="flex-1 flex items-center justify-center p-8">Carregando artigo...</div>;
@@ -65,9 +73,15 @@ export default function PostDetail({ postId, onBack }: PostDetailProps) {
           {post.title}
         </h1>
 
-        <p className="text-sm text-gray-500 font-medium mb-8">
-          Publicado em {post.date.split('-').reverse().join('/')}
-        </p>
+        <div className="flex items-center justify-center gap-3 text-sm text-gray-500 font-medium mb-8">
+          <span>Publicado em {post.date.split('-').reverse().join('/')}</span>
+          {isAdmin && (
+            <>
+              <span className="text-gray-300">·</span>
+              <span>{post.views ?? 0} visualizações</span>
+            </>
+          )}
+        </div>
         
         <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed italic font-serif">
           {post.description}
@@ -88,6 +102,8 @@ export default function PostDetail({ postId, onBack }: PostDetailProps) {
       <div className="prose prose-lg prose-blue max-w-none text-gray-800 leading-loose whitespace-pre-wrap font-serif">
         {post.content}
       </div>
+
+      <PostInteractions postId={post.id} isAdmin={isAdmin} isLoggedIn={isLoggedIn} token={token} onLoginRequired={onLoginRequired} />
     </article>
   );
 }

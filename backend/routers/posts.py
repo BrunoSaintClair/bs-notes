@@ -6,7 +6,7 @@ from uuid import UUID
 from database import get_db
 import models
 import schemas
-from dependencies import verify_admin 
+from dependencies import verify_admin, verify_user
 
 router = APIRouter()
 
@@ -26,11 +26,25 @@ def get_post(post_id: UUID, db: Session = Depends(get_db)):
     if not post:
         raise HTTPException(status_code=404, detail="Post não encontrado.")
     
-    post.views += 1
-    db.commit()
-    db.refresh(post)
-    
     return post
+
+@router.post("/{post_id}/view", status_code=status.HTTP_200_OK)
+def register_view(post_id: UUID, db: Session = Depends(get_db), current_user: models.User = Depends(verify_user)):
+    post = db.query(models.Post).filter(models.Post.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post não encontrado.")
+    
+    existing_view = db.query(models.PostView).filter(
+        models.PostView.post_id == post_id,
+        models.PostView.user_id == current_user.id
+    ).first()
+
+    if not existing_view:
+        new_view = models.PostView(post_id=post_id, user_id=current_user.id)
+        db.add(new_view)
+        db.commit()
+
+    return {"status": "ok"}
 
 @router.post("/", response_model=schemas.PostResponse, status_code=status.HTTP_201_CREATED)
 def create(

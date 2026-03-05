@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine
 import models
-from routers import users_router, posts_router, tags_router, dictionary_router
+from routers import users_router, posts_router, tags_router, dictionary_router, reactions_router, comments_router
 
 import os
 from dotenv import load_dotenv
@@ -29,6 +29,8 @@ app.include_router(users_router, prefix="/users", tags=["Users"])
 app.include_router(posts_router, prefix="/posts", tags=["Posts"])
 app.include_router(tags_router, prefix="/tags", tags=["Tags"])
 app.include_router(dictionary_router, prefix="/dictionary", tags=["Dictionary"])
+app.include_router(reactions_router, prefix="/posts", tags=["Reactions"])
+app.include_router(comments_router, prefix="/posts", tags=["Comments"])
 
 @app.get("/")
 def read_root():

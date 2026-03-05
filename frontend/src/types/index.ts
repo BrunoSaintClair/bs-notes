@@ -26,6 +26,7 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  is_admin: boolean;
 }
 
 export interface PostCreate {
@@ -46,4 +47,22 @@ export interface DictionaryItemCreate {
 
 export interface TagCreate {
   name: string;
+}
+
+export interface ReactionSummary {
+  likes: number;
+  dislikes: number;
+}
+
+export interface UserReaction {
+  type: string | null;
+}
+
+export interface CommentResponse {
+  id: string;
+  post_id: string;
+  content: string;
+  visitor_id: string;
+  username: string;
+  created_at: string;
 }

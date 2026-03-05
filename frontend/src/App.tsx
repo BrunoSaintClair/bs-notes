@@ -39,8 +39,7 @@ function App() {
   const handleLogout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("authToken");
+    localStorage.clear();
     setCurrentPage("blog");
     setSelectedPostId(null);
   };
@@ -113,7 +112,11 @@ function App() {
               onBack={() => {
                 setSelectedPostId(null);
                 setCurrentPage("blog");
-              }} 
+              }}
+              isAdmin={user?.is_admin ?? false}
+              isLoggedIn={!!user}
+              token={token}
+              onLoginRequired={() => setToastMessage("Para interagir, faça login. Suas interações não ficam públicas, apenas o dono do site pode visualizá-las.")}
             />
           )}
 

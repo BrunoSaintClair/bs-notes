@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 JWT_SECRET = os.getenv("JWT_SECRET")
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 
 router = APIRouter()
 
@@ -63,8 +64,11 @@ def login_with_google(request: schemas.GoogleLoginRequest, db: Session = Depends
 
         access_token = create_access_token(email)
 
+        user_response = schemas.UserResponse.model_validate(user)
+        user_response.is_admin = (email == ADMIN_EMAIL)
+
         return schemas.LoginResponse(
-            user=schemas.UserResponse.model_validate(user),
+            user=user_response,
             access_token=access_token,
         )
 

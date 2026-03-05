@@ -1,4 +1,4 @@
-import type { Post, Tag, DictionaryItem, User, PostCreate, TagCreate, DictionaryItemCreate } from "../types";
+import type { Post, Tag, DictionaryItem, User, PostCreate, TagCreate, DictionaryItemCreate, ReactionSummary, UserReaction, CommentResponse } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -40,6 +40,13 @@ export const api = {
     const response = await fetch(`${API_URL}/posts/${id}`);
     if (!response.ok) throw new Error("Erro buscando post");
     return response.json();
+  },
+
+  registerView: async (postId: string, token: string): Promise<void> => {
+    await fetch(`${API_URL}/posts/${postId}/view`, {
+      method: "POST",
+      headers: getAuthHeaders(token),
+    });
   },
 
   getTags: async (): Promise<Tag[]> => {
@@ -153,6 +160,64 @@ export const api = {
     });
     checkAuth(response);
     if (!response.ok) throw new Error("Erro ao deletar item");
+  },
+
+  toggleReaction: async (postId: string, type: string, token: string): Promise<UserReaction> => {
+    const response = await fetch(`${API_URL}/posts/${postId}/reactions`, {
+      method: "POST",
+      headers: getAuthHeaders(token),
+      body: JSON.stringify({ type }),
+    });
+    checkAuth(response);
+    if (!response.ok) throw new Error("Erro ao registrar reação");
+    return response.json();
+  },
+
+  getReactionSummary: async (postId: string, token: string): Promise<ReactionSummary> => {
+    const response = await fetch(`${API_URL}/posts/${postId}/reactions/summary`, {
+      headers: getAuthHeaders(token),
+    });
+    checkAuth(response);
+    if (!response.ok) throw new Error("Erro ao buscar reações");
+    return response.json();
+  },
+
+  checkReaction: async (postId: string, token: string): Promise<UserReaction> => {
+    const response = await fetch(`${API_URL}/posts/${postId}/reactions/check`, {
+      headers: getAuthHeaders(token),
+    });
+    checkAuth(response);
+    if (!response.ok) throw new Error("Erro ao verificar reação");
+    return response.json();
+  },
+
+  createComment: async (postId: string, content: string, token: string): Promise<CommentResponse> => {
+    const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
+      method: "POST",
+      headers: getAuthHeaders(token),
+      body: JSON.stringify({ content }),
+    });
+    checkAuth(response);
+    if (!response.ok) throw new Error("Erro ao enviar comentário");
+    return response.json();
+  },
+
+  getMyComments: async (postId: string, token: string): Promise<CommentResponse[]> => {
+    const response = await fetch(`${API_URL}/posts/${postId}/comments/mine`, {
+      headers: getAuthHeaders(token),
+    });
+    checkAuth(response);
+    if (!response.ok) throw new Error("Erro ao buscar seus comentários");
+    return response.json();
+  },
+
+  getComments: async (postId: string, token: string): Promise<CommentResponse[]> => {
+    const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
+      headers: getAuthHeaders(token),
+    });
+    checkAuth(response);
+    if (!response.ok) throw new Error("Erro ao buscar comentários");
+    return response.json();
   },
 
 };
