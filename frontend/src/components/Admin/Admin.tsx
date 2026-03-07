@@ -3,6 +3,7 @@ import { FaTrash, FaPlus, FaEdit, FaTimes } from "react-icons/fa";
 import type { Post, Tag, DictionaryItem } from "../../types";
 import { api, AuthExpiredError } from "../../services/api";
 import Toast from "../Toast/Toast";
+import RichTextEditor from "./RichTextEditor";
 
 interface AdminProps {
   token: string;
@@ -276,12 +277,9 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Conteúdo (Artigo)</label>
-                <textarea 
-                  value={postContent}
-                  onChange={(e) => setPostContent(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-y h-48"
-                  placeholder="Escreva o artigo completo aqui..."
-                  required
+                <RichTextEditor
+                  content={postContent}
+                  onContentChange={setPostContent}
                   disabled={isLoadingPost}
                 />
               </div>

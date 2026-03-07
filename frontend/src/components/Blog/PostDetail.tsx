@@ -99,9 +99,10 @@ export default function PostDetail({ postId, onBack, isAdmin = false, isLoggedIn
         </div>
       )}
 
-      <div className="prose prose-lg prose-blue max-w-none text-gray-800 leading-loose whitespace-pre-wrap font-serif">
-        {post.content}
-      </div>
+      <div
+        className="post-content prose prose-lg prose-blue max-w-none text-gray-800 leading-loose font-serif"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
 
       <PostInteractions postId={post.id} isAdmin={isAdmin} isLoggedIn={isLoggedIn} token={token} onLoginRequired={onLoginRequired} />
     </article>
