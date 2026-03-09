@@ -1,9 +1,12 @@
 @import "tailwindcss";
 
 @theme {
+  --color-sky-blue: #0ea5e9;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Merriweather', ui-serif, Georgia, serif;
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 html {
   overflow-y: scroll;
@@ -33,6 +36,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-y: overlay;
+  @apply bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors duration-200;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -53,14 +57,13 @@ body {
   background-color: #94a3b8;
 }
 
-/* Post content rich text styles */
 .post-content h1 {
   font-size: 1.75em;
   font-weight: 800;
   margin: 1em 0 0.5em;
   line-height: 1.2;
-  color: #111827;
   font-family: var(--font-sans);
+  @apply text-gray-900 dark:text-gray-100;
 }
 
 .post-content h2 {
@@ -68,8 +71,8 @@ body {
   font-weight: 700;
   margin: 0.9em 0 0.4em;
   line-height: 1.3;
-  color: #1f2937;
   font-family: var(--font-sans);
+  @apply text-gray-800 dark:text-gray-200;
 }
 
 .post-content h3 {
@@ -77,8 +80,8 @@ body {
   font-weight: 700;
   margin: 0.8em 0 0.35em;
   line-height: 1.4;
-  color: #374151;
   font-family: var(--font-sans);
+  @apply text-gray-700 dark:text-gray-300;
 }
 
 .post-content ul {
@@ -98,31 +101,29 @@ body {
 }
 
 .post-content blockquote {
-  border-left: 3px solid #9ca3af;
+  border-left: 3px solid;
   padding-left: 1.2em;
   margin: 1em 0;
-  color: #6b7280;
   font-style: italic;
+  @apply border-gray-400 dark:border-gray-500 text-gray-500 dark:text-gray-400;
 }
 
 .post-content pre {
-  background: #1e293b;
-  color: #e2e8f0;
   padding: 14px 18px;
   border-radius: 0.5rem;
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: 0.9em;
   overflow-x: auto;
   margin: 1em 0;
+  @apply bg-slate-800 dark:bg-slate-900 text-slate-200;
 }
 
 .post-content code {
-  background: #f1f5f9;
-  color: #e11d48;
   padding: 2px 5px;
   border-radius: 0.25rem;
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: 0.9em;
+  @apply bg-slate-100 dark:bg-slate-800 text-rose-600 dark:text-rose-400;
 }
 
 .post-content pre code {
@@ -133,8 +134,9 @@ body {
 
 .post-content hr {
   border: none;
-  border-top: 2px solid #e5e7eb;
+  border-top: 2px solid;
   margin: 2em 0;
+  @apply border-gray-200 dark:border-gray-700;
 }
 
 .post-content strong {
@@ -170,12 +172,10 @@ body {
 }
 
 .share-modal {
-  background: white;
   border-radius: 1.25rem;
   padding: 1.75rem;
   width: 90%;
   max-width: 420px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   animation: shareModalIn 0.25s ease-out;
 }
 

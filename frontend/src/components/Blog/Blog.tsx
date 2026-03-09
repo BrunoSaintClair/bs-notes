@@ -41,14 +41,14 @@ export default function Blog({ posts, tags }: BlogProps) {
 
   return (
     <main className="flex-1 max-w-4xl mx-auto px-6 py-12 w-full">
-      <div className="flex items-center justify-between gap-6 mb-8 pb-6 border-b border-gray-200">
+      <div className="flex items-center justify-between gap-6 mb-8 pb-6 border-b border-gray-200 dark:border-gray-800">
         <div className="flex gap-8 overflow-x-auto custom-scrollbar pb-2">
           <button
             onClick={() => setSelectedTag(null)}
             className={`px-1 py-2 font-medium whitespace-nowrap transition-colors border-b-2 cursor-pointer ${
               selectedTag === null
-                ? "text-text-primary border-b-sage-green"
-                : "text-gray-400 border-b-transparent hover:text-gray-600"
+                ? "text-gray-900 dark:text-white border-b-sage-green dark:border-b-sky-blue"
+                : "text-gray-400 dark:text-gray-500 border-b-transparent hover:text-gray-600 dark:hover:text-gray-300"
             }`}
           >
             Todos
@@ -59,17 +59,17 @@ export default function Blog({ posts, tags }: BlogProps) {
               onClick={() => setSelectedTag(tag.id)}
               className={`px-1 py-2 font-medium whitespace-nowrap transition-colors border-b-2 cursor-pointer ${
                 selectedTag === tag.id
-                  ? "text-text-primary border-b-sage-green"
-                  : "text-gray-400 border-b-transparent hover:text-gray-600"
+                  ? "text-gray-900 dark:text-white border-b-sage-green dark:border-b-sky-blue"
+                  : "text-gray-400 dark:text-gray-500 border-b-transparent hover:text-gray-600 dark:hover:text-gray-300"
               }`}
             >
               {tag.name}
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-3 min-w-fit px-3 py-2 rounded-lg transition-all duration-200 focus-within:bg-gray-100 focus-within:border-sage-green">
+        <div className="flex items-center gap-3 min-w-fit px-3 py-2 rounded-lg transition-all duration-200 focus-within:bg-gray-100 dark:focus-within:bg-gray-800 focus-within:border-sage-green dark:focus-within:border-sky-blue">
           <svg
-            className="w-5 h-5 text-gray-400 transition-colors duration-200 focus-within:text-text-primary"
+            className="w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors duration-200 focus-within:text-gray-900 dark:focus-within:text-white"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -83,7 +83,7 @@ export default function Blog({ posts, tags }: BlogProps) {
             placeholder="Procurar artigos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none text-sm w-40 transition-colors duration-200"
+            className="bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none text-sm w-40 transition-colors duration-200"
           />
         </div>
       </div>
@@ -98,11 +98,11 @@ export default function Blog({ posts, tags }: BlogProps) {
               <div className="flex justify-center pt-8">
                 <button
                   onClick={() => setPostsToShow(postsToShow + 5)}
-                  className="group flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:text-blue-600 transition-all shadow-sm cursor-pointer"
+                  className="group flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-blue-600 dark:hover:text-sky-blue transition-all shadow-sm cursor-pointer"
                 >
                   Ver mais artigos
                   <svg 
-                    className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" 
+                    className="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-blue-500 dark:group-hover:text-sky-blue transition-colors" 
                     fill="none" stroke="currentColor" viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>

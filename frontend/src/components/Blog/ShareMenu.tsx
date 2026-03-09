@@ -61,7 +61,7 @@ export default function ShareMenu({ postId, postTitle }: ShareMenuProps) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all duration-200 cursor-pointer"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer"
         title="Compartilhar"
       >
         <BiShareAlt className="text-lg" />
@@ -73,12 +73,12 @@ export default function ShareMenu({ postId, postTitle }: ShareMenuProps) {
           className="share-overlay"
           onClick={handleOverlayClick}
         >
-          <div ref={modalRef} className="share-modal">
+          <div ref={modalRef} className="share-modal bg-white dark:bg-gray-900 shadow-[0_25px_50px_rgba(0,0,0,0.25)] dark:shadow-gray-900/50">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-gray-900">Compartilhar</h3>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Compartilhar</h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer"
               >
                 ✕
               </button>
@@ -93,7 +93,7 @@ export default function ShareMenu({ postId, postTitle }: ShareMenuProps) {
                 <div className="w-14 h-14 rounded-full bg-[#25D366] flex items-center justify-center text-white text-2xl shadow-md group-hover:scale-110 transition-transform duration-200">
                   <FaWhatsapp />
                 </div>
-                <span className="text-xs text-gray-600 font-medium">WhatsApp</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">WhatsApp</span>
               </button>
 
               <button
@@ -104,18 +104,18 @@ export default function ShareMenu({ postId, postTitle }: ShareMenuProps) {
                 <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition-all duration-200 ${
                   copied
                     ? "bg-green-500 text-white"
-                    : "bg-gray-200 text-gray-700"
+                    : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
                 }`}>
                   {copied ? <BiCheck /> : <BiCopy />}
                 </div>
-                <span className="text-xs text-gray-600 font-medium">
+                <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">
                   {copied ? "Copiado!" : "Copiar link"}
                 </span>
               </button>
             </div>
 
-            <div className="flex items-center gap-2 bg-gray-100 rounded-xl px-4 py-3">
-              <span className="flex-1 text-sm text-gray-600 truncate select-all">
+            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-3">
+              <span className="flex-1 text-sm text-gray-600 dark:text-gray-300 truncate select-all">
                 {shareUrl}
               </span>
               <button

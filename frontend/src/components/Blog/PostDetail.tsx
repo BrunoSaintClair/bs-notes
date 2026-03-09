@@ -59,7 +59,7 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
     <article className="flex-1 w-full max-w-4xl mx-auto p-4 md:p-8 shrink-0">
       <button 
         onClick={() => navigate("/")}
-        className="text-gray-500 hover:text-gray-900 mb-8 inline-flex items-center gap-2 transition-colors cursor-pointer"
+        className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-8 inline-flex items-center gap-2 transition-colors cursor-pointer"
       >
         ← Voltar
       </button>
@@ -67,21 +67,21 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
       <header className="mb-10 text-center">
         <div className="flex items-center justify-center gap-4 mb-4">
           {post.tags.map(tag => (
-            <span key={tag.id} className="text-sm font-bold uppercase text-sage-green tracking-widest bg-sage-green/10 px-3 py-1 rounded-full">
+            <span key={tag.id} className="text-sm font-bold uppercase text-sage-green dark:text-sky-blue tracking-widest bg-sage-green/10 dark:bg-sky-blue/20 px-3 py-1 rounded-full">
               {tag.name}
             </span>
           ))}
         </div>
         
-        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-gray-100 mb-4 leading-tight">
           {post.title}
         </h1>
 
-        <div className="flex items-center justify-center gap-3 text-sm text-gray-500 font-medium mb-8">
+        <div className="flex items-center justify-center gap-3 text-sm text-gray-500 dark:text-gray-400 font-medium mb-8">
           <span>Publicado em {post.date.split('-').reverse().join('/')}</span>
           {isAdmin && (
             <>
-              <span className="text-gray-300">·</span>
+              <span className="text-gray-300 dark:text-gray-600">·</span>
               <span>{post.views ?? 0} visualizações</span>
             </>
           )}
@@ -91,13 +91,13 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
           <ShareMenu postId={post.id} postTitle={post.title} />
         </div>
         
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed italic font-serif">
+        <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed italic font-serif">
           {post.description}
         </p>
       </header>
 
       {post.image && !imgError && (
-        <div className="w-full max-w-3xl mx-auto h-48 md:h-72 mb-12 rounded-2xl overflow-hidden shadow-lg">
+        <div className="w-full max-w-3xl mx-auto h-48 md:h-72 mb-12 rounded-2xl overflow-hidden shadow-lg dark:shadow-gray-900/50">
           <img 
             src={post.image} 
             alt={post.title} 
@@ -108,7 +108,7 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
       )}
 
       <div
-        className="post-content prose prose-lg prose-blue max-w-none text-gray-800 leading-loose font-serif"
+        className="post-content prose prose-lg prose-blue dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 leading-loose font-serif"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
