@@ -1,24 +1,28 @@
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import type { Post } from "../../types";
 import { api } from "../../services/api";
 import PostInteractions from "./PostInteractions";
+import ShareMenu from "./ShareMenu";
 
 interface PostDetailProps {
-  postId: string;
-  onBack: () => void;
   isAdmin?: boolean;
   isLoggedIn?: boolean;
   token?: string | null;
   onLoginRequired?: () => void;
 }
 
-export default function PostDetail({ postId, onBack, isAdmin = false, isLoggedIn = false, token, onLoginRequired }: PostDetailProps) {
+export default function PostDetail({ isAdmin = false, isLoggedIn = false, token, onLoginRequired }: PostDetailProps) {
+  const { postId } = useParams<{ postId: string }>();
+  const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
+    if (!postId) return;
+
     const fetchPost = async () => {
       try {
         setIsLoading(true);
@@ -46,7 +50,7 @@ export default function PostDetail({ postId, onBack, isAdmin = false, isLoggedIn
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8 text-center gap-4">
         <p className="text-red-500">{error || "Artigo não encontrado."}</p>
-        <button onClick={onBack} className="text-blue-600 hover:underline">Voltar para o blog</button>
+        <button onClick={() => navigate("/")} className="text-blue-600 hover:underline">Voltar para o blog</button>
       </div>
     );
   }
@@ -54,7 +58,7 @@ export default function PostDetail({ postId, onBack, isAdmin = false, isLoggedIn
   return (
     <article className="flex-1 w-full max-w-4xl mx-auto p-4 md:p-8 shrink-0">
       <button 
-        onClick={onBack}
+        onClick={() => navigate("/")}
         className="text-gray-500 hover:text-gray-900 mb-8 inline-flex items-center gap-2 transition-colors cursor-pointer"
       >
         ← Voltar
@@ -81,6 +85,10 @@ export default function PostDetail({ postId, onBack, isAdmin = false, isLoggedIn
               <span>{post.views ?? 0} visualizações</span>
             </>
           )}
+        </div>
+
+        <div className="flex justify-center mb-8">
+          <ShareMenu postId={post.id} postTitle={post.title} />
         </div>
         
         <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed italic font-serif">

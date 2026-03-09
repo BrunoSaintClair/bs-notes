@@ -1,17 +1,23 @@
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { api } from '../../services/api';
 import type { User } from '../../types';
 
 interface HeaderProps {
-  currentPage: "blog" | "dictionary" | "about" | "admin" | "post";
-  onPageChange: (page: "blog" | "dictionary" | "about" | "admin" | "post") => void;
   user: User | null;
   onLoginSuccess: (user: User, token: string) => void;
   onLogout: () => void;
 }
 
-const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: HeaderProps) => {
+const Header = ({ user, onLoginSuccess, onLogout }: HeaderProps) => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
+
+    const isActive = (path: string) => {
+        if (path === "/") return location.pathname === "/";
+        return location.pathname.startsWith(path);
+    };
 
     const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
         if (credentialResponse.credential) {
@@ -29,14 +35,14 @@ const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: H
             <div className="max-w-4xl mx-auto flex items-center justify-between">
                 
                 <div className="flex items-center gap-16">
-                    <button onClick={() => onPageChange("blog")} className="cursor-pointer hover:opacity-80 transition-opacity">
+                    <button onClick={() => navigate("/")} className="cursor-pointer hover:opacity-80 transition-opacity">
                         <h1 className="text-xl font-bold text-gray-900">BS Notes</h1>
                     </button>
                     <nav className="flex gap-8">
                         <button
-                            onClick={() => onPageChange("blog")}
+                            onClick={() => navigate("/")}
                             className={`font-medium transition-colors cursor-pointer ${
-                              currentPage === "blog"
+                              isActive("/") && !location.pathname.startsWith("/post")
                                 ? "text-text-primary border-b-2 border-b-sage-green pb-1"
                                 : "text-gray-500 hover:text-gray-600"
                             }`}
@@ -44,9 +50,9 @@ const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: H
                             Blog
                         </button>
                         <button
-                            onClick={() => onPageChange("dictionary")}
+                            onClick={() => navigate("/dictionary")}
                             className={`font-medium transition-colors cursor-pointer ${
-                              currentPage === "dictionary"
+                              isActive("/dictionary")
                                 ? "text-text-primary border-b-2 border-b-sage-green pb-1"
                                 : "text-gray-500 hover:text-gray-600"
                             }`}
@@ -54,9 +60,9 @@ const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: H
                             Dicionário
                         </button>
                         <button
-                            onClick={() => onPageChange("about")}
+                            onClick={() => navigate("/about")}
                             className={`font-medium transition-colors cursor-pointer ${
-                              currentPage === "about"
+                              isActive("/about")
                                 ? "text-text-primary border-b-2 border-b-sage-green pb-1"
                                 : "text-gray-500 hover:text-gray-600"
                             }`}
@@ -66,9 +72,9 @@ const Header = ({ currentPage, onPageChange, user, onLoginSuccess, onLogout }: H
 
                         {user && user.email === ADMIN_EMAIL && (
                             <button
-                                onClick={() => onPageChange("admin")}
+                                onClick={() => navigate("/admin")}
                                 className={`font-medium transition-colors cursor-pointer ${
-                                currentPage === "admin"
+                                isActive("/admin")
                                     ? "text-text-primary border-b-2 border-b-sage-green pb-1"
                                     : "text-gray-500 hover:text-gray-600"
                                 }`}

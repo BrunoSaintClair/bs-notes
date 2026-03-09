@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Blog from "./components/Blog/Blog";
@@ -11,9 +12,8 @@ import type { Post, Tag, DictionaryItem, User } from "./types";
 import { api } from "./services/api";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<"blog" | "dictionary" | "about" | "admin" | "post">("blog");
-  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
-  
+  const navigate = useNavigate();
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [dictionaryItems, setDictionaryItems] = useState<DictionaryItem[]>([]);
@@ -40,8 +40,7 @@ function App() {
     setUser(null);
     setToken(null);
     localStorage.clear();
-    setCurrentPage("blog");
-    setSelectedPostId(null);
+    navigate("/");
   };
 
   const handleSessionExpired = () => {
@@ -82,8 +81,6 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header 
-        currentPage={currentPage} 
-        onPageChange={setCurrentPage} 
         user={user} 
         onLoginSuccess={handleLoginSuccess} 
         onLogout={handleLogout} 
@@ -94,36 +91,28 @@ function App() {
       ) : error ? (
         <div className="flex-1 flex items-center justify-center text-red-500">{error}</div>
       ) : (
-        <>
-          {currentPage === "blog" && (
+        <Routes>
+          <Route path="/" element={
             <Blog 
               posts={posts.filter((p) => p.is_public !== false)} 
               tags={tags} 
-              onReadPost={(id) => {
-                setSelectedPostId(id);
-                setCurrentPage("post");
-              }}
             />
-          )}
+          } />
 
-          {currentPage === "post" && selectedPostId && (
+          <Route path="/post/:postId" element={
             <PostDetail 
-              postId={selectedPostId} 
-              onBack={() => {
-                setSelectedPostId(null);
-                setCurrentPage("blog");
-              }}
               isAdmin={user?.is_admin ?? false}
               isLoggedIn={!!user}
               token={token}
               onLoginRequired={() => setToastMessage("Para interagir, faça login. Suas interações não ficam públicas, apenas o dono do site pode visualizá-las.")}
             />
-          )}
+          } />
 
-          {currentPage === "dictionary" && <Dictionary items={dictionaryItems} />}
-          {currentPage === "about" && <About />}
+          <Route path="/dictionary" element={<Dictionary items={dictionaryItems} />} />
+          <Route path="/about" element={<About />} />
           
-          {currentPage === "admin" && (user && token ? (
+          <Route path="/admin" element={
+            user && token ? (
               <Admin 
                 token={token}
                 tags={tags} 
@@ -134,8 +123,8 @@ function App() {
             ) : (
               <div className="text-center mt-10 text-red-600">Acesso Negado. Faça login como admin.</div>
             )
-          )}
-        </>
+          } />
+        </Routes>
       )}
       
       <Footer />

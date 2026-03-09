@@ -1,14 +1,15 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Post, Tag } from "../../types";
 import PostCard from "./PostCard";
 
 interface BlogProps {
   posts: Post[];
   tags: Tag[];
-  onReadPost: (id: string) => void;
 }
 
-export default function Blog({ posts, tags, onReadPost }: BlogProps) {
+export default function Blog({ posts, tags }: BlogProps) {
+  const navigate = useNavigate();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [postsToShow, setPostsToShow] = useState<number>(5);
@@ -91,7 +92,7 @@ export default function Blog({ posts, tags, onReadPost }: BlogProps) {
         {filteredPosts.length > 0 ? (
           <>
             {displayedPosts.map((post) => (
-              <PostCard key={post.id} post={post} onReadMore={() => onReadPost(post.id)} />
+              <PostCard key={post.id} post={post} onReadMore={() => navigate(`/post/${post.id}`)} />
             ))}
             {hasMorePosts && (
               <div className="flex justify-center pt-8">
