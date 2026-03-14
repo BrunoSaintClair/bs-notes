@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Post, Tag, DictionaryItem } from "@/types";
-import { api, AuthExpiredError } from "@/services/api";
+import { api, AuthExpiredError, PermissionDeniedError } from "@/services/api";
 import Toast from "@/components/Toast/Toast";
 import PostForm from "@/components/Admin/PostForm";
 import PostList from "@/components/Admin/PostList";
@@ -13,11 +13,12 @@ interface AdminProps {
   dictionaryItems: DictionaryItem[];
   refreshData: () => void;
   onSessionExpired: () => void;
+  onPermissionDenied: () => void;
 }
 
 type Tab = "posts" | "tags" | "dictionary";
 
-export default function Admin({ token, tags, dictionaryItems, refreshData, onSessionExpired }: AdminProps) {
+export default function Admin({ token, tags, dictionaryItems, refreshData, onSessionExpired, onPermissionDenied }: AdminProps) {
   const getTodayDate = () => new Date().toISOString().split("T")[0];
 
   const [adminPosts, setAdminPosts] = useState<Post[]>([]);
@@ -49,11 +50,12 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
       setAdminPosts(data);
     } catch (error) {
       if (error instanceof AuthExpiredError) { onSessionExpired(); return; }
+      if (error instanceof PermissionDeniedError) { onPermissionDenied(); return; }
       console.error(error);
     } finally {
       setIsLoadingAdminPosts(false);
     }
-  }, [token, onSessionExpired]);
+  }, [token, onSessionExpired, onPermissionDenied]);
 
   useEffect(() => {
     fetchAdminPosts();
@@ -61,6 +63,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
 
   const handleAuthError = (error: unknown) => {
     if (error instanceof AuthExpiredError) { onSessionExpired(); return true; }
+    if (error instanceof PermissionDeniedError) { onPermissionDenied(); return true; }
     return false;
   };
 

@@ -9,14 +9,24 @@ export class AuthExpiredError extends Error {
   }
 }
 
+export class PermissionDeniedError extends Error {
+  constructor(message = "Você não tem permissão para acessar esta área.") {
+    super(message);
+    this.name = "PermissionDeniedError";
+  }
+}
+
 const getAuthHeaders = (token: string) => ({
   "Content-Type": "application/json",
   "Authorization": `Bearer ${token}`
 });
 
 const checkAuth = (response: Response) => {
-  if (response.status === 401 || response.status === 403) {
+  if (response.status === 401) {
     throw new AuthExpiredError();
+  }
+  if (response.status === 403) {
+    throw new PermissionDeniedError();
   }
 };
 

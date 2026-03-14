@@ -11,6 +11,13 @@ import Toast from "@/components/Toast/Toast";
 import type { Post, Tag, DictionaryItem, User } from "@/types";
 import { api } from "@/services/api";
 
+const PermissionDeniedRedirect = ({ onDenied }: { onDenied: () => void }) => {
+  useEffect(() => {
+    onDenied();
+  }, [onDenied]);
+  return null;
+};
+
 function App() {
   const navigate = useNavigate();
 
@@ -47,6 +54,11 @@ function App() {
     handleLogout();
     setToastMessage("Sua sessão expirou. Faça login novamente para acessar o painel administrativo.");
   };
+
+  const handlePermissionDenied = useCallback(() => {
+    navigate("/");
+    setToastMessage("Você não tem permissão para acessar a área administrativa.");
+  }, [navigate]);
 
   const fetchInitialData = useCallback(async (showLoading = true) => {
     try {
@@ -121,13 +133,18 @@ function App() {
           
           <Route path="/admin" element={
             user && token ? (
-              <Admin 
-                token={token}
-                tags={tags} 
-                dictionaryItems={dictionaryItems}
-                refreshData={refreshData}
-                onSessionExpired={handleSessionExpired}
-              />
+              user.is_admin ? (
+                <Admin 
+                  token={token}
+                  tags={tags} 
+                  dictionaryItems={dictionaryItems}
+                  refreshData={refreshData}
+                  onSessionExpired={handleSessionExpired}
+                  onPermissionDenied={handlePermissionDenied}
+                />
+              ) : (
+                <PermissionDeniedRedirect onDenied={handlePermissionDenied} />
+              )
             ) : (
               <div className="text-center mt-10 text-red-600">Acesso Negado. Faça login como admin.</div>
             )
