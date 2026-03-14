@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { api } from "../../services/api";
-import type { ReactionSummary, UserReaction, CommentResponse } from "../../types";
+import { api } from "@/services/api";
+import type { ReactionSummary, UserReaction, CommentResponse } from "@/types";
+import { formatDateTime } from "@/utils/formatDate";
 import {
   BiLike, BiDislike, BiSolidLike, BiSolidDislike,
   BiComment, BiLockAlt, BiCheckCircle
@@ -12,6 +13,36 @@ interface PostInteractionsProps {
   isLoggedIn?: boolean;
   token?: string | null;
   onLoginRequired?: () => void;
+}
+
+function CommentCard({ comment }: { comment: CommentResponse }) {
+  return (
+    <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-semibold text-gray-600">{comment.username}</span>
+        <span className="text-xs text-gray-400">
+          {formatDateTime(comment.created_at)}
+        </span>
+      </div>
+      <p className="text-sm text-gray-800 whitespace-pre-wrap break-all">{comment.content}</p>
+    </div>
+  );
+}
+
+function CommentList({ comments, title }: { comments: CommentResponse[]; title: string }) {
+  return (
+    <div className="mt-8 pt-6 border-t border-gray-200">
+      <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+        <BiComment className="text-base" />
+        {title} ({comments.length})
+      </h4>
+      <div className="space-y-3">
+        {comments.map((comment) => (
+          <CommentCard key={comment.id} comment={comment} />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function PostInteractions({ postId, isAdmin = false, isLoggedIn = false, token, onLoginRequired }: PostInteractionsProps) {
@@ -26,22 +57,23 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
 
   const fetchData = useCallback(async () => {
     try {
-      if (isLoggedIn && token) {
-        const reactionData = await api.checkReaction(postId, token);
-        setUserReaction(reactionData);
+      const fetches: Promise<unknown>[] = [];
 
-        const myCommentsData = await api.getMyComments(postId, token);
-        setMyComments(myCommentsData);
+      if (isLoggedIn && token) {
+        fetches.push(
+          api.checkReaction(postId, token).then((d) => setUserReaction(d)),
+          api.getMyComments(postId, token).then((d) => setMyComments(d)),
+        );
       }
 
       if (isAdmin && token) {
-        const [summaryData, commentsData] = await Promise.all([
-          api.getReactionSummary(postId, token),
-          api.getComments(postId, token),
-        ]);
-        setSummary(summaryData);
-        setComments(commentsData);
+        fetches.push(
+          api.getReactionSummary(postId, token).then((d) => setSummary(d)),
+          api.getComments(postId, token).then((d) => setComments(d)),
+        );
       }
+
+      await Promise.all(fetches);
     } catch (err) {
       console.error("Erro ao carregar interações:", err);
     }
@@ -79,13 +111,13 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
       setCommentSent(true);
       setTimeout(() => setCommentSent(false), 4000);
 
-      const myCommentsData = await api.getMyComments(postId, token);
-      setMyComments(myCommentsData);
-
+      const fetches: Promise<unknown>[] = [
+        api.getMyComments(postId, token).then((d) => setMyComments(d)),
+      ];
       if (isAdmin && token) {
-        const commentsData = await api.getComments(postId, token);
-        setComments(commentsData);
+        fetches.push(api.getComments(postId, token).then((d) => setComments(d)));
       }
+      await Promise.all(fetches);
     } catch (err) {
       console.error("Erro ao enviar comentário:", err);
     } finally {
@@ -205,53 +237,11 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
       )}
 
       {!isAdmin && myComments.length > 0 && (
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-            <BiComment className="text-base" />
-            Meus comentários ({myComments.length})
-          </h4>
-          <div className="space-y-3">
-            {myComments.map((comment) => (
-              <div key={comment.id} className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-gray-600">{comment.username}</span>
-                  <span className="text-xs text-gray-400">
-                    {new Date(comment.created_at).toLocaleDateString("pt-BR", {
-                      day: "2-digit", month: "2-digit", year: "numeric",
-                      hour: "2-digit", minute: "2-digit"
-                    })}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-800 whitespace-pre-wrap break-all">{comment.content}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <CommentList comments={myComments} title="Meus comentários" />
       )}
 
       {isAdmin && comments.length > 0 && (
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-            <BiComment className="text-base" />
-            Todos os comentários ({comments.length})
-          </h4>
-          <div className="space-y-3">
-            {comments.map((comment) => (
-              <div key={comment.id} className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-gray-600">{comment.username}</span>
-                  <span className="text-xs text-gray-400">
-                    {new Date(comment.created_at).toLocaleDateString("pt-BR", {
-                      day: "2-digit", month: "2-digit", year: "numeric",
-                      hour: "2-digit", minute: "2-digit"
-                    })}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-800 whitespace-pre-wrap break-all">{comment.content}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <CommentList comments={comments} title="Todos os comentários" />
       )}
     </div>
   );

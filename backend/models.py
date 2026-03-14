@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, ForeignKey, Table, Uuid, Integer, Boolean, DateTime
+from sqlalchemy import Column, String, ForeignKey, Table, Uuid, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -38,7 +38,7 @@ class Post(Base):
     content = Column(String, nullable=False, default="")
     image = Column(String, nullable=True, default="")
     date = Column(String, nullable=False)
-    views = Column(Integer, default=0)
+
     is_public = Column(Boolean, default=True)
     user_id = Column(Uuid, ForeignKey('users.id'), nullable=False)
     

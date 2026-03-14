@@ -62,7 +62,7 @@ export interface CommentResponse {
   id: string;
   post_id: string;
   content: string;
-  visitor_id: string;
+  user_id: string;
   username: string;
   created_at: string;
 }

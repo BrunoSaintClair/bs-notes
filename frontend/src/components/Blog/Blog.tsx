@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Post, Tag } from "../../types";
-import PostCard from "./PostCard";
+import type { Post, Tag } from "@/types";
+import PostCard from "@/components/Blog/PostCard";
 
 interface BlogProps {
   posts: Post[];
@@ -28,8 +28,7 @@ export default function Blog({ posts, tags }: BlogProps) {
       filtered = filtered.filter(
         (post) =>
           post.title.toLowerCase().includes(query) ||
-          post.description.toLowerCase().includes(query) ||
-          post.content.toLowerCase().includes(query)
+          post.description.toLowerCase().includes(query)
       );
     }
 

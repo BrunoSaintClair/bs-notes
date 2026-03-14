@@ -1,4 +1,4 @@
-import type { Post, Tag, DictionaryItem, User, PostCreate, TagCreate, DictionaryItemCreate, ReactionSummary, UserReaction, CommentResponse } from "../types";
+import type { Post, Tag, DictionaryItem, User, PostCreate, TagCreate, DictionaryItemCreate, ReactionSummary, UserReaction, CommentResponse } from "@/types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

@@ -15,7 +15,7 @@ import {
   FaMinus,
 } from "react-icons/fa";
 import { useEffect } from "react";
-import "./editor.css";
+import "@/components/Admin/editor.css";
 
 interface RichTextEditorProps {
   content: string;

@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import Header from "./components/Header/Header";
-import Footer from "./components/Footer/Footer";
-import Blog from "./components/Blog/Blog";
-import Dictionary from "./components/Dictionary/Dictionary";
-import About from "./components/About/About";
-import Admin from "./components/Admin/Admin";
-import PostDetail from "./components/Blog/PostDetail";
-import Toast from "./components/Toast/Toast";
-import type { Post, Tag, DictionaryItem, User } from "./types";
-import { api } from "./services/api";
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
+import Blog from "@/components/Blog/Blog";
+import Dictionary from "@/components/Dictionary/Dictionary";
+import About from "@/components/About/About";
+import Admin from "@/components/Admin/Admin";
+import PostDetail from "@/components/Blog/PostDetail";
+import Toast from "@/components/Toast/Toast";
+import type { Post, Tag, DictionaryItem, User } from "@/types";
+import { api } from "@/services/api";
 
 function App() {
   const navigate = useNavigate();
@@ -48,20 +48,18 @@ function App() {
     setToastMessage("Sua sessão expirou. Faça login novamente para acessar o painel administrativo.");
   };
 
-  const fetchData = useCallback(async (showLoading = true) => {
+  const fetchInitialData = useCallback(async (showLoading = true) => {
     try {
       if (showLoading) {
         setIsLoading(true);
       }
 
-      const [postsData, tagsData, dictionaryData] = await Promise.all([
+      const [postsData, tagsData] = await Promise.all([
         api.getPosts(),
         api.getTags(),
-        api.getDictionaryItems(),
       ]);
       setPosts(postsData);
       setTags(tagsData);
-      setDictionaryItems(dictionaryData);
     } catch (err) {
       console.error(err);
       setError("Erro ao carregar dados.");
@@ -72,11 +70,21 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const fetchDictionary = useCallback(async () => {
+    if (dictionaryItems.length > 0) return;
+    try {
+      const data = await api.getDictionaryItems();
+      setDictionaryItems(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [dictionaryItems.length]);
 
-  const refreshData = () => fetchData(false);
+  useEffect(() => {
+    fetchInitialData();
+  }, [fetchInitialData]);
+
+  const refreshData = () => fetchInitialData(false);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -94,7 +102,7 @@ function App() {
         <Routes>
           <Route path="/" element={
             <Blog 
-              posts={posts.filter((p) => p.is_public !== false)} 
+              posts={posts} 
               tags={tags} 
             />
           } />
@@ -108,7 +116,7 @@ function App() {
             />
           } />
 
-          <Route path="/dictionary" element={<Dictionary items={dictionaryItems} />} />
+          <Route path="/dictionary" element={<Dictionary items={dictionaryItems} onMount={fetchDictionary} />} />
           <Route path="/about" element={<About />} />
           
           <Route path="/admin" element={

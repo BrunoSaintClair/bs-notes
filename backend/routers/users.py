@@ -11,14 +11,12 @@ import schemas
 from database import get_db
 
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+router = APIRouter()
+
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 JWT_SECRET = os.getenv("JWT_SECRET")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
-
-router = APIRouter()
 
 
 def create_access_token(email: str) -> str:

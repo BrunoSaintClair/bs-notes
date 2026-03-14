@@ -1,8 +1,8 @@
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { api } from '../../services/api';
-import type { User } from '../../types';
-import { useTheme } from '../ThemeContext';
+import { api } from '@/services/api';
+import type { User } from '@/types';
+import { useTheme } from '@/components/Theme/ThemeContext';
 import { FiSun, FiMoon } from 'react-icons/fi';
 
 interface HeaderProps {
@@ -118,27 +118,14 @@ const Header = ({ user, onLoginSuccess, onLogout }: HeaderProps) => {
                                 </button>
                             </div>
                         ) : (
-                            <div className="grid place-items-center">
-                                <div className="col-start-1 row-start-1 transition-opacity duration-200 dark:opacity-0 dark:invisible">
-                                    <GoogleLogin
-                                        onSuccess={handleGoogleSuccess}
-                                        onError={() => console.log('Login falhou')}
-                                        useOneTap
-                                        theme="outline"
-                                        shape="rectangular"
-                                        text="signin_with"
-                                    />
-                                </div>
-                                <div className="col-start-1 row-start-1 transition-opacity duration-200 opacity-0 invisible dark:opacity-100 dark:visible">
-                                    <GoogleLogin
-                                        onSuccess={handleGoogleSuccess}
-                                        onError={() => console.log('Login falhou')}
-                                        theme="filled_black"
-                                        shape="rectangular"
-                                        text="signin_with"
-                                    />
-                                </div>
-                            </div>
+                        <GoogleLogin
+                                onSuccess={handleGoogleSuccess}
+                                onError={() => console.log('Login falhou')}
+                                useOneTap
+                                theme={theme === 'dark' ? 'filled_black' : 'outline'}
+                                shape="rectangular"
+                                text="signin_with"
+                            />
                         )}
                     </div>
                 </div>

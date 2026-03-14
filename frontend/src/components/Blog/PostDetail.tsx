@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import type { Post } from "../../types";
-import { api } from "../../services/api";
-import PostInteractions from "./PostInteractions";
-import ShareMenu from "./ShareMenu";
+import type { Post } from "@/types";
+import { api } from "@/services/api";
+import { formatDate } from "@/utils/formatDate";
+import PostInteractions from "@/components/Blog/PostInteractions";
+import ShareMenu from "@/components/Blog/ShareMenu";
 
 interface PostDetailProps {
   isAdmin?: boolean;
@@ -78,7 +79,7 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
         </h1>
 
         <div className="flex items-center justify-center gap-3 text-sm text-gray-500 dark:text-gray-400 font-medium mb-8">
-          <span>Publicado em {post.date.split('-').reverse().join('/')}</span>
+          <span>Publicado em {formatDate(post.date)}</span>
           {isAdmin && (
             <>
               <span className="text-gray-300 dark:text-gray-600">·</span>

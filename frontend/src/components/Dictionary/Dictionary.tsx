@@ -1,13 +1,18 @@
-import { useState, useMemo } from "react";
-import type { DictionaryItem } from "../../types";
+import { useState, useMemo, useEffect } from "react";
+import type { DictionaryItem } from "@/types";
 
 interface DictionaryProps {
   items: DictionaryItem[];
+  onMount?: () => void;
 }
 
-export default function Dictionary({ items }: DictionaryProps) {
+export default function Dictionary({ items, onMount }: DictionaryProps) {
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  useEffect(() => {
+    onMount?.();
+  }, [onMount]);
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 

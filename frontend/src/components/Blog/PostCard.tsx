@@ -1,5 +1,6 @@
 import { useState } from "react";
-import type { Post } from "../../types";
+import type { Post } from "@/types";
+import { formatDate } from "@/utils/formatDate";
 
 interface PostCardProps {
   post: Post;
@@ -40,7 +41,7 @@ export default function PostCard({ post, onReadMore }: PostCardProps) {
             </>
           )}
           <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">
-            {post.date.split('-').reverse().join('/')}
+            {formatDate(post.date)}
           </p>
         </div>
 
