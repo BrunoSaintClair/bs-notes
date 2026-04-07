@@ -1,7 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import engine
-import models
 from routers import users_router, posts_router, tags_router, dictionary_router, reactions_router, comments_router
 
 import os
@@ -9,13 +7,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-FRONTEND_URL = os.getenv("FRONTEND_URL")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "")
 
-models.Base.metadata.create_all(bind=engine)
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+if FRONTEND_URL:
+    origins.append(FRONTEND_URL)
 
 app = FastAPI()
-
-origins = [FRONTEND_URL]
 
 app.add_middleware(
     CORSMiddleware,
