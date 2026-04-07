@@ -5,6 +5,10 @@
   transition: box-shadow 0.2s;
 }
 
+.dark .rich-editor-wrapper {
+  border-color: #1f2937;
+}
+
 .rich-editor-wrapper:focus-within {
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
 }
@@ -18,11 +22,20 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
+.dark .editor-toolbar {
+  background: rgba(31, 41, 55, 0.8);
+  border-color: #374151;
+}
+
 .editor-toolbar .divider {
   width: 1px;
   background: #d1d5db;
   margin: 0 4px;
   align-self: stretch;
+}
+
+.dark .editor-toolbar .divider {
+  background: #374151;
 }
 
 .toolbar-btn {
@@ -41,14 +54,28 @@
   transition: all 0.15s;
 }
 
+.dark .toolbar-btn {
+  color: #9ca3af;
+}
+
 .toolbar-btn:hover {
   background: #e5e7eb;
   color: #111827;
 }
 
+.dark .toolbar-btn:hover {
+  background: #374151;
+  color: #f3f4f6;
+}
+
 .toolbar-btn.is-active {
   background: #dbeafe;
   color: #2563eb;
+}
+
+.dark .toolbar-btn.is-active {
+  background: rgba(14, 165, 233, 0.2);
+  color: #0ea5e9;
 }
 
 .toolbar-btn:disabled {
@@ -65,6 +92,10 @@
   font-size: 15px;
   line-height: 1.7;
   color: #1f2937;
+}
+
+.dark .ProseMirror {
+  color: #f3f4f6;
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
@@ -120,6 +151,11 @@
   font-style: italic;
 }
 
+.dark .ProseMirror blockquote {
+  border-color: #4b5563;
+  color: #9ca3af;
+}
+
 .ProseMirror pre {
   background: #1e293b;
   color: #e2e8f0;
@@ -140,6 +176,11 @@
   font-size: 0.9em;
 }
 
+.dark .ProseMirror code {
+  background: #1f2937;
+  color: #fb7185;
+}
+
 .ProseMirror pre code {
   background: none;
   color: inherit;
@@ -150,6 +191,10 @@
   border: none;
   border-top: 2px solid #e5e7eb;
   margin: 1.5em 0;
+}
+
+.dark .ProseMirror hr {
+  border-color: #374151;
 }
 
 .ProseMirror strong {

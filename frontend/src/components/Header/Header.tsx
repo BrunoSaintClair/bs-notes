@@ -56,9 +56,9 @@ const Header = ({ user, onLoginSuccess, onLogout }: HeaderProps) => {
                             Blog
                         </button>
                         <button
-                            onClick={() => navigate("/dictionary")}
+                            onClick={() => navigate("/dicionario")}
                             className={`font-medium transition-colors cursor-pointer ${
-                              isActive("/dictionary")
+                              isActive("/dicionario")
                                 ? "text-sky-blue border-b-2 border-b-sky-blue pb-1"
                                 : "text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                             }`}
@@ -66,9 +66,9 @@ const Header = ({ user, onLoginSuccess, onLogout }: HeaderProps) => {
                             Dicionário
                         </button>
                         <button
-                            onClick={() => navigate("/about")}
+                            onClick={() => navigate("/sobre")}
                             className={`font-medium transition-colors cursor-pointer ${
-                              isActive("/about")
+                              isActive("/sobre")
                                 ? "text-sky-blue border-b-2 border-b-sky-blue pb-1"
                                 : "text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                             }`}

@@ -86,6 +86,16 @@ export default function PostForm({
               placeholder="https://exemplo.com/imagem.jpg (opcional)"
               disabled={isLoading}
             />
+            {postImage && (
+              <div className="mt-2 relative flex flex-col items-center justify-center border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-lg p-2 bg-gray-50 dark:bg-gray-800/50">
+                <img
+                  src={postImage}
+                  alt="Preview"
+                  className="max-h-48 rounded shadow-md object-contain"
+                  />
+                <span className="text-[10px] text-gray-400 mt-2">Miniatura da Capa</span>
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data de Publicação</label>
@@ -93,7 +103,7 @@ export default function PostForm({
               type="date"
               value={postDate}
               onChange={(e) => onDateChange(e.target.value)}
-              className="w-full p-2 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-gray-100 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-700"
+              className="w-full p-2 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-gray-100 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:scheme-dark"
               required
               disabled={isLoading}
             />

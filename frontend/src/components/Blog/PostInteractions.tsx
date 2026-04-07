@@ -17,22 +17,22 @@ interface PostInteractionsProps {
 
 function CommentCard({ comment }: { comment: CommentResponse }) {
   return (
-    <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+    <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl dark:bg-gray-800/50 dark:border-gray-700">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-semibold text-gray-600">{comment.username}</span>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">{comment.username}</span>
+        <span className="text-xs text-gray-400 dark:text-gray-500">
           {formatDateTime(comment.created_at)}
         </span>
       </div>
-      <p className="text-sm text-gray-800 whitespace-pre-wrap break-all">{comment.content}</p>
+      <p className="text-sm text-gray-800 whitespace-pre-wrap break-all dark:text-gray-200">{comment.content}</p>
     </div>
   );
 }
 
 function CommentList({ comments, title }: { comments: CommentResponse[]; title: string }) {
   return (
-    <div className="mt-8 pt-6 border-t border-gray-200">
-      <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+    <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800">
+      <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2 dark:text-gray-300">
         <BiComment className="text-base" />
         {title} ({comments.length})
       </h4>
@@ -129,7 +129,7 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
   const isDisliked = userReaction.type === "dislike";
 
   return (
-    <div className="mt-12 pt-8 border-t border-gray-200">
+    <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
       <div className="flex items-center gap-2">
         <button
           onClick={() => handleReaction("like")}
@@ -147,7 +147,7 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
           {isAdmin && summary.likes > 0 && <span>{summary.likes}</span>}
         </button>
 
-        <div className="w-px h-6 bg-gray-300"></div>
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700"></div>
 
         <button
           onClick={() => handleReaction("dislike")}
@@ -193,7 +193,7 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
 
       {showCommentBox && (
         <div className="mt-6 animate-fade-in">
-          <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm">
+          <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm dark:bg-amber-900/20 dark:border-amber-800/50 dark:text-amber-400">
             <BiLockAlt className="text-base shrink-0" />
             <span>Apenas o dono do site poderá ler seu comentário.</span>
           </div>
@@ -204,7 +204,7 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
             placeholder="Escreva seu comentário..."
             maxLength={300}
             rows={3}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-800 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-800 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:focus:ring-blue-900/30 dark:focus:border-blue-700"
           />
 
           <div className="flex items-center justify-between mt-2">
@@ -218,8 +218,8 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
                 px-5 py-2 rounded-full text-sm font-semibold
                 transition-all duration-200 cursor-pointer
                 ${commentText.trim()
-                  ? "bg-gray-800 text-white hover:bg-gray-700"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  ? "bg-gray-800 text-white hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
+                  : "bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600"
                 }
               `}
             >

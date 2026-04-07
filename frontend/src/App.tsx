@@ -128,8 +128,8 @@ function App() {
             />
           } />
 
-          <Route path="/dictionary" element={<Dictionary items={dictionaryItems} onMount={fetchDictionary} />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/dicionario" element={<Dictionary items={dictionaryItems} onMount={fetchDictionary} />} />
+          <Route path="/sobre" element={<About />} />
           
           <Route path="/admin" element={
             user && token ? (
