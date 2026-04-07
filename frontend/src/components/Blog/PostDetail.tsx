@@ -66,7 +66,7 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
       </button>
 
       <header className="mb-10 text-center">
-        <div className="flex items-center justify-center gap-4 mb-4">
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
           {post.tags.map(tag => (
             <span key={tag.id} className="text-sm font-bold uppercase text-sage-green dark:text-sky-blue tracking-widest bg-sage-green/10 dark:bg-sky-blue/20 px-3 py-1 rounded-full">
               {tag.name}
@@ -92,7 +92,7 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
           <ShareMenu postId={post.id} postTitle={post.title} />
         </div>
         
-        <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed italic font-serif">
+        <p className="text-base md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed italic font-serif">
           {post.description}
         </p>
       </header>

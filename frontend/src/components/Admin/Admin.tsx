@@ -205,7 +205,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
     <div className="flex-1 w-full container mx-auto p-4">
       <h1 className="text-2xl font-bold mt-4 mb-6 flex justify-center dark:text-gray-100">Painel Administrativo</h1>
 
-      <div className="flex gap-4 mb-8 border-b border-gray-200 dark:border-gray-800 pb-2">
+      <div className="flex gap-4 mb-8 border-b border-gray-200 dark:border-gray-800 pb-2 overflow-x-auto">
         {(["posts", "tags", "dictionary"] as Tab[]).map(tab => (
           <button
             key={tab}

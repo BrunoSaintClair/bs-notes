@@ -1,7 +1,7 @@
 const About = () => {
   return (
     <main className="flex-1 max-w-4xl mx-auto px-6 py-12 w-full flex flex-col">
-      <h1 className="text-3xl font-bold text-text-primary dark:text-gray-100 mt-28 mb-8">Sobre</h1>
+      <h1 className="text-3xl font-bold text-text-primary dark:text-gray-100 mt-8 md:mt-28 mb-8">Sobre</h1>
       
       <div className="text-gray-700 dark:text-gray-300 leading-relaxed space-y-4 max-w-4xl">
         <p>
