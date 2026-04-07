@@ -12,12 +12,12 @@ export default function PostCard({ post, onReadMore }: PostCardProps) {
 
   return (
     <article className="flex flex-col sm:flex-row gap-6 sm:gap-8 pb-10 mb-10 sm:pb-12 sm:mb-12 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
-      <div className="shrink-0 w-full h-48 sm:w-56 sm:h-44">
+      <div className="shrink-0 w-full h-48 sm:w-56 sm:h-44 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
         {post.image && !imgError ? (
           <img
             src={post.image}
             alt={post.title}
-            className="w-full h-full object-cover rounded-lg"
+            className="w-full h-full rounded-lg"
             onError={() => setImgError(true)}
           />
         ) : (
