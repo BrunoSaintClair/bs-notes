@@ -109,11 +109,11 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
       )}
 
       <div
-        className="post-content prose prose-lg prose-blue dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 leading-loose font-serif"
+        className="post-content prose prose-lg prose-blue dark:prose-invert max-w-none text-gray-800 dark:text-gray-200"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
-      <PostInteractions postId={post.id} isAdmin={isAdmin} isLoggedIn={isLoggedIn} token={token} onLoginRequired={onLoginRequired} />
+      <PostInteractions postId={post.id} postTitle={post.title} isAdmin={isAdmin} isLoggedIn={isLoggedIn} token={token} onLoginRequired={onLoginRequired} />
     </article>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { api } from "@/services/api";
 import type { ReactionSummary, UserReaction, CommentResponse } from "@/types";
 import { formatDateTime } from "@/utils/formatDate";
+import ShareMenu from "@/components/Blog/ShareMenu";
 import {
   BiLike, BiDislike, BiSolidLike, BiSolidDislike,
   BiComment, BiLockAlt, BiCheckCircle
@@ -9,6 +10,7 @@ import {
 
 interface PostInteractionsProps {
   postId: string;
+  postTitle?: string;
   isAdmin?: boolean;
   isLoggedIn?: boolean;
   token?: string | null;
@@ -45,7 +47,7 @@ function CommentList({ comments, title }: { comments: CommentResponse[]; title: 
   );
 }
 
-export default function PostInteractions({ postId, isAdmin = false, isLoggedIn = false, token, onLoginRequired }: PostInteractionsProps) {
+export default function PostInteractions({ postId, postTitle = "", isAdmin = false, isLoggedIn = false, token, onLoginRequired }: PostInteractionsProps) {
   const [summary, setSummary] = useState<ReactionSummary>({ likes: 0, dislikes: 0 });
   const [userReaction, setUserReaction] = useState<UserReaction>({ type: null });
   const [comments, setComments] = useState<CommentResponse[]>([]);
@@ -138,7 +140,7 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
             transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-sm
             ${isLiked
               ? "bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-800/50"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-blue-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200"
             }
           `}
           title="Gostei"
@@ -156,7 +158,7 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
             transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-sm
             ${isDisliked
               ? "bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-300 dark:hover:bg-red-800/50"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-red-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-red-400"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200"
             }
           `}
           title="Não gostei"
@@ -181,7 +183,7 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
             transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-sm
             ${showCommentBox
               ? "bg-gray-800 text-white hover:bg-gray-900 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200"
             }
           `}
           title="Comentar"
@@ -189,6 +191,10 @@ export default function PostInteractions({ postId, isAdmin = false, isLoggedIn =
           <BiComment className="text-lg" />
           Comentar
         </button>
+
+        <div className="ml-auto pl-4 border-l border-gray-200 dark:border-gray-700">
+          <ShareMenu postId={postId} postTitle={postTitle} />
+        </div>
       </div>
 
       {showCommentBox && (

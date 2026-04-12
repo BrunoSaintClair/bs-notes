@@ -4,6 +4,7 @@
   --color-sky-blue: #0ea5e9;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Merriweather', ui-serif, Georgia, serif;
+  --font-article: 'Lora', serif;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -155,8 +156,14 @@ body {
   text-decoration: line-through;
 }
 
+.post-content {
+  font-family: var(--font-article);
+  line-height: 1.8;
+  font-size: 1.125rem;
+}
+
 .post-content p {
-  margin: 0.5em 0;
+  margin: 1.25em 0;
 }
 
 .share-overlay {
