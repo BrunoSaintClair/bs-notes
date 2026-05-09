@@ -29,7 +29,7 @@ export default function PostList({ posts, isLoading, onEdit, onDelete }: PostLis
           </p>
         ) : (
           <ul className="space-y-4">
-            {posts.map((post: Post) => (
+            {[...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((post: Post) => (
               <li
                 key={post.id}
                 className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group relative"

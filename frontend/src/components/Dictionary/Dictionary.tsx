@@ -17,20 +17,15 @@ export default function Dictionary({ items, onMount }: DictionaryProps) {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
   const filteredItems = useMemo(() => {
-    let filtered = items;
+    const filtered = items.filter((item) => {
+      const matchesLetter = selectedLetter ? item.letter === selectedLetter : true;
+      const matchesQuery = searchQuery.trim() 
+        ? item.term.toLowerCase().includes(searchQuery.trim().toLowerCase()) 
+        : true;
+      return matchesLetter && matchesQuery;
+    });
 
-    if (selectedLetter) {
-      filtered = filtered.filter((item) => item.letter === selectedLetter);
-    }
-
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (item) =>
-          item.term.toLowerCase().includes(query) 
-      );
-    }
-
+    filtered.sort((a, b) => a.term.localeCompare(b.term));
     return filtered;
   }, [items, selectedLetter, searchQuery]);
 

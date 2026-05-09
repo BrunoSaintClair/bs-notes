@@ -72,7 +72,7 @@ export default function DictionaryManager({
             </p>
           ) : (
             <ul className="space-y-3">
-              {items.map(item => (
+              {[...items].sort((a, b) => a.term.localeCompare(b.term)).map(item => (
                 <li
                   key={item.id}
                   className="flex flex-col p-4 bg-gray-50 dark:bg-gray-800/50 rounded border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group relative"

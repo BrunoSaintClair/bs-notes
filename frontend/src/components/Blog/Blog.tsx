@@ -32,7 +32,7 @@ export default function Blog({ posts, tags }: BlogProps) {
       );
     }
 
-    return filtered;
+    return [...filtered].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [posts, selectedTag, searchQuery]);
 
   const displayedPosts = filteredPosts.slice(0, postsToShow);
