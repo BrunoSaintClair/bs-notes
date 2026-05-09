@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Post, Tag } from "@/types";
 import PostCard from "@/components/Blog/PostCard";
+import HeroSection from "@/components/Blog/HeroSection";
 
 interface BlogProps {
   posts: Post[];
@@ -35,19 +36,33 @@ export default function Blog({ posts, tags }: BlogProps) {
     return [...filtered].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [posts, selectedTag, searchQuery]);
 
-  const displayedPosts = filteredPosts.slice(0, postsToShow);
-  const hasMorePosts = filteredPosts.length > postsToShow;
+  // Separate the hero post (most recent) from the rest — only when no filter/search is active
+  const isDefaultView = !selectedTag && !searchQuery.trim();
+  const heroPost = isDefaultView && filteredPosts.length > 0 ? filteredPosts[0] : null;
+  const regularPosts = heroPost ? filteredPosts.slice(1) : filteredPosts;
+  const displayedPosts = regularPosts.slice(0, postsToShow);
+  const hasMorePosts = regularPosts.length > postsToShow;
 
   return (
-    <main className="flex-1 max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-6 border-b border-gray-200 dark:border-gray-800">
-        <div className="flex gap-8 overflow-x-auto custom-scrollbar pb-2">
+    <main className="flex-1 max-w-[1120px] mx-auto px-4 sm:px-6 py-10 md:py-16 w-full">
+      {/* Hero Section */}
+      {heroPost && (
+        <HeroSection
+          post={heroPost}
+          onReadMore={() => navigate(`/post/${heroPost.id}`)}
+        />
+      )}
+
+      {/* Filter bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10 pb-6 border-b border-gray-200/80 dark:border-gray-800/60 animate-fade-in-up-delay-1">
+        {/* Tag filters */}
+        <div className="flex gap-1 overflow-x-auto custom-scrollbar pb-1">
           <button
             onClick={() => setSelectedTag(null)}
-            className={`px-1 py-2 font-medium whitespace-nowrap transition-colors border-b-2 cursor-pointer ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200 cursor-pointer ${
               selectedTag === null
-                ? "text-sky-blue dark:text-white border-b-sky-blue"
-                : "text-gray-400 dark:text-gray-500 border-b-transparent hover:text-gray-600 dark:hover:text-gray-300"
+                ? "text-sky-blue bg-sky-blue/8 dark:bg-sky-blue/10"
+                : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50"
             }`}
           >
             Todos
@@ -56,19 +71,21 @@ export default function Blog({ posts, tags }: BlogProps) {
             <button
               key={tag.id}
               onClick={() => setSelectedTag(tag.id)}
-              className={`px-1 py-2 font-medium whitespace-nowrap transition-colors border-b-2 cursor-pointer ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200 cursor-pointer ${
                 selectedTag === tag.id
-                  ? "text-sky-blue dark:text-white border-b-sky-blue"
-                  : "text-gray-400 dark:text-gray-500 border-b-transparent hover:text-gray-600 dark:hover:text-gray-300"
+                  ? "text-sky-blue bg-sky-blue/8 dark:bg-sky-blue/10"
+                  : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50"
               }`}
             >
               {tag.name}
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-3 min-w-fit px-3 py-2 rounded-lg transition-all duration-200 focus-within:bg-gray-100 dark:focus-within:bg-gray-800 focus-within:border-sage-green dark:focus-within:border-sky-blue">
+
+        {/* Search */}
+        <div className="flex items-center gap-3 min-w-fit px-4 py-2.5 rounded-lg border border-transparent transition-all duration-200 focus-within:border-gray-200 dark:focus-within:border-gray-700 focus-within:bg-white dark:focus-within:bg-gray-800/50">
           <svg
-            className="w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors duration-200 focus-within:text-gray-900 dark:focus-within:text-white"
+            className="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -82,26 +99,27 @@ export default function Blog({ posts, tags }: BlogProps) {
             placeholder="Procurar artigos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none text-sm w-40 transition-colors duration-200"
+            className="bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none text-sm w-40 transition-colors duration-200"
           />
         </div>
       </div>
 
-      <div className="space-y-0">
+      {/* Articles list */}
+      <div className="animate-fade-in-up-delay-2">
         {filteredPosts.length > 0 ? (
           <>
             {displayedPosts.map((post) => (
               <PostCard key={post.id} post={post} onReadMore={() => navigate(`/post/${post.id}`)} />
             ))}
             {hasMorePosts && (
-              <div className="flex justify-center pt-8">
+              <div className="flex justify-center pt-10">
                 <button
                   onClick={() => setPostsToShow(postsToShow + 5)}
-                  className="group flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-blue-600 dark:hover:text-sky-blue transition-all shadow-sm cursor-pointer"
+                  className="group flex items-center justify-center gap-2 px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium rounded-xl borderhover:border-gray-300hover:text-sky-blue dark:hover:text-sky-blue hover:border-sky-blue/30 dark:hover:border-sky-blue/20 transition-all duration-300 cursor-pointer"
                 >
                   Ver mais artigos
-                  <svg 
-                    className="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-blue-500 dark:group-hover:text-sky-blue transition-colors" 
+                  <svg
+                    className="w-4 h-4 transition-transform duration-200 group-hover:translate-y-0.5"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
@@ -111,8 +129,8 @@ export default function Blog({ posts, tags }: BlogProps) {
             )}
           </>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500">Nenhum post foi encontrado.</p>
+          <div className="text-center py-20">
+            <p className="text-gray-400 dark:text-gray-500 text-sm">Nenhum post foi encontrado.</p>
           </div>
         )}
       </div>
