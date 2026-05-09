@@ -33,11 +33,11 @@ export default function Dictionary({ items, onMount }: DictionaryProps) {
     <main className="flex-1 max-w-4xl mx-auto px-6 py-12 w-full">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-text-primary dark:text-gray-100 mb-2">Dicionário</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">Conheça os termos e conceitos que devem aparecer em alguns posts.</p>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">Conheça termos e conceitos que devem aparecer em alguns posts.</p>
 
-        <div className="flex items-center gap-3 mb-8 px-3 py-2 rounded-lg transition-all duration-200 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 focus-within:bg-gray-50 dark:focus-within:bg-gray-800 focus-within:border-sage-green dark:focus-within:border-sky-blue">
+        <div className="flex items-center gap-3 mb-8 min-w-fit px-3 py-2 rounded-lg transition-all duration-200 focus-within:bg-gray-100 dark:focus-within:bg-gray-800 focus-within:border-sage-green dark:focus-within:border-sky-blue">
           <svg
-            className="w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors duration-200 focus-within:text-text-primary dark:focus-within:text-gray-100"
+            className="w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors duration-200 focus-within:text-gray-900 dark:focus-within:text-white"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -51,7 +51,7 @@ export default function Dictionary({ items, onMount }: DictionaryProps) {
             placeholder="Procurar palavra..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none text-sm transition-colors duration-200"
+            className="bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none text-sm w-full md:w-96 transition-colors duration-200"
           />
         </div>
       </div>
@@ -61,8 +61,8 @@ export default function Dictionary({ items, onMount }: DictionaryProps) {
           onClick={() => setSelectedLetter(null)}
           className={`px-8 py-3 rounded-lg transition-all font-bold text-sm min-w-24 ${
             selectedLetter === null
-              ? "bg-gray-900 text-white border-2 border-gray-900 dark:bg-sky-blue dark:text-white dark:border-sky-blue"
-              : "bg-gray-100 text-gray-700 border-2 border-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-800 dark:hover:bg-gray-700"
+              ? "bg-sky-blue text-white border-2 border-sky-blue"
+              : "bg-gray-100 text-gray-700 border-2 border-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-800 dark:hover:bg-gray-700 cursor-pointer"
           }`}
         >
           Todos
@@ -73,7 +73,7 @@ export default function Dictionary({ items, onMount }: DictionaryProps) {
             onClick={() => setSelectedLetter(letter)}
             className={`w-12 h-12 flex items-center justify-center rounded-lg transition-all font-extrabold text-lg cursor-pointer ${
               selectedLetter === letter
-                ? "bg-gray-900 text-white border-2 border-gray-900 dark:bg-sky-blue dark:text-white dark:border-sky-blue"
+                ? "bg-sky-blue text-white border-2 border-sky-blue"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             }`}
           >
@@ -85,7 +85,7 @@ export default function Dictionary({ items, onMount }: DictionaryProps) {
       <div className="space-y-6">
         {filteredItems.length > 0 ? (
           filteredItems.map((item) => (
-            <div key={item.id} className="border-l-4 border-sage-green dark:border-sky-blue pl-4">
+            <div key={item.id} className="border-l-4 border-sky-blue pl-4">
               <h3 className="text-xl font-bold text-text-primary dark:text-gray-100 mb-2">
                 {item.term}
               </h3>

@@ -46,7 +46,7 @@ export default function Blog({ posts, tags }: BlogProps) {
             onClick={() => setSelectedTag(null)}
             className={`px-1 py-2 font-medium whitespace-nowrap transition-colors border-b-2 cursor-pointer ${
               selectedTag === null
-                ? "text-gray-900 dark:text-white border-b-sage-green dark:border-b-sky-blue"
+                ? "text-sky-blue dark:text-white border-b-sky-blue"
                 : "text-gray-400 dark:text-gray-500 border-b-transparent hover:text-gray-600 dark:hover:text-gray-300"
             }`}
           >
@@ -58,7 +58,7 @@ export default function Blog({ posts, tags }: BlogProps) {
               onClick={() => setSelectedTag(tag.id)}
               className={`px-1 py-2 font-medium whitespace-nowrap transition-colors border-b-2 cursor-pointer ${
                 selectedTag === tag.id
-                  ? "text-gray-900 dark:text-white border-b-sage-green dark:border-b-sky-blue"
+                  ? "text-sky-blue dark:text-white border-b-sky-blue"
                   : "text-gray-400 dark:text-gray-500 border-b-transparent hover:text-gray-600 dark:hover:text-gray-300"
               }`}
             >

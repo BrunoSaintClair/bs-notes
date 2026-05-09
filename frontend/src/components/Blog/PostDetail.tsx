@@ -68,7 +68,7 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
       <header className="mb-10 text-center">
         <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
           {post.tags.map(tag => (
-            <span key={tag.id} className="text-sm font-bold uppercase text-sage-green dark:text-sky-blue tracking-widest bg-sage-green/10 dark:bg-sky-blue/20 px-3 py-1 rounded-full">
+            <span key={tag.id} className="text-sm font-bold uppercase text-sky-blue tracking-widest bg-blue-50 dark:bg-sky-blue/20 px-3 py-1 rounded-full">
               {tag.name}
             </span>
           ))}

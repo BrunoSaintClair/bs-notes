@@ -34,7 +34,7 @@ export default function PostCard({ post, onReadMore }: PostCardProps) {
         <div className="flex items-center gap-6 mb-3">
           {post.tags.length > 0 && (
             <>
-              <span className="text-xs font-bold uppercase text-sage-green dark:text-sky-blue tracking-widest">
+              <span className="text-xs font-bold uppercase text-sky-blue tracking-widest">
                 {post.tags[0].name}
               </span>
               <span className="w-1 h-1 bg-gray-400 dark:bg-gray-600 rounded-full"></span>
@@ -46,7 +46,7 @@ export default function PostCard({ post, onReadMore }: PostCardProps) {
         </div>
 
         <h3 
-          className="text-2xl font-bold text-gray-900 dark:text-white mb-4 leading-tight cursor-pointer hover:text-baltic-blue dark:hover:text-sky-blue transition-colors"
+          className="text-2xl font-bold text-gray-900 dark:text-white mb-4 leading-tight cursor-pointer hover:text-sky-blue transition-colors"
           onClick={onReadMore}
         >
           {post.title}
@@ -58,7 +58,7 @@ export default function PostCard({ post, onReadMore }: PostCardProps) {
 
         <button
           onClick={onReadMore}
-          className="text-gray-900 dark:text-gray-300 font-semibold text-sm hover:text-baltic-blue dark:hover:text-sky-blue transition-colors inline-block cursor-pointer"
+          className="text-gray-900 dark:text-gray-300 font-semibold text-md hover:text-sky-blue transition-colors inline-block cursor-pointer"
         >
           Ler artigo →
         </button>
