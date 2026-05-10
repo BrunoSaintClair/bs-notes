@@ -43,7 +43,7 @@ rignore==0.7.6
 rsa==4.9.1
 sentry-sdk==2.51.0
 shellingham==1.5.4
-SQLAlchemy==2.0.23
+SQLAlchemy==2.0.36
 starlette==0.50.0
 typer==0.21.1
 typing-inspection==0.4.2
