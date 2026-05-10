@@ -165,4 +165,16 @@ export const api = {
     if (!response.ok) throw new Error("Erro ao deletar item");
   },
 
+  sendFeedback: async (data: { name: string; email: string; message: string }): Promise<void> => {
+    const response = await fetch(`${API_URL}/feedback/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || "Erro ao enviar feedback");
+    }
+  },
+
 };

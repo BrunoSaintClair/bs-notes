@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from uuid import UUID
 from typing import List
 
@@ -64,3 +64,8 @@ class UserResponse(UserBase):
 class LoginResponse(BaseModel):
     user: UserResponse
     access_token: str
+
+class FeedbackCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    email: str = Field(default="", max_length=200)
+    message: str = Field(..., min_length=1, max_length=2000)
