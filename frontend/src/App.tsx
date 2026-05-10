@@ -141,7 +141,15 @@ function App() {
       />
 
       {isLoading ? (
-        <div className="flex-1 flex items-center justify-center">Carregando...</div>
+        <div className="flex-1 flex flex-col items-center justify-center p-8 animate-fade-in text-center">
+          <div className="w-12 h-12 border-4 border-sky-200 dark:border-sky-900 border-t-sky-500 dark:border-t-sky-500 rounded-full animate-spin mb-6 shadow-md"></div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 font-heading">
+            Preparando tudo...
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md">
+            O servidor back-end pode estar hibernando e iniciando no momento. Isso pode levar alguns segundos adicionais. Obrigado pela paciência!
+          </p>
+        </div>
       ) : error ? (
         <div className="flex-1 flex items-center justify-center text-red-500">{error}</div>
       ) : (
