@@ -170,7 +170,7 @@ export default function Dictionary({ items, onMount }: DictionaryProps) {
                       <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 font-heading tracking-tight">
                         {item.term}
                       </h3>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed break-words">
+                      <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed wrap-break-word">
                         {item.definition}
                       </p>
                     </div>

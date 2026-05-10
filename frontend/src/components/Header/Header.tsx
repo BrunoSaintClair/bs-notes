@@ -1,18 +1,15 @@
 import { useState } from 'react';
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { api } from '@/services/api';
 import type { User } from '@/types';
 import { useTheme } from '@/components/Theme/ThemeContext';
 import { FiSun, FiMoon, FiMenu, FiX } from 'react-icons/fi';
 
 interface HeaderProps {
   user: User | null;
-  onLoginSuccess: (user: User, token: string) => void;
   onLogout: () => void;
 }
 
-const Header = ({ user, onLoginSuccess, onLogout }: HeaderProps) => {
+const Header = ({ user, onLogout }: HeaderProps) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { theme, toggleTheme } = useTheme();
@@ -24,22 +21,13 @@ const Header = ({ user, onLoginSuccess, onLogout }: HeaderProps) => {
         return location.pathname.startsWith(path);
     };
 
-    const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
-        if (credentialResponse.credential) {
-            try {
-                const result = await api.loginGoogle(credentialResponse.credential);
-                onLoginSuccess(result.user, result.access_token);
-            } catch (error) {
-                console.error("Erro ao autenticar no backend:", error);
-            }
-        }
-    };
+    const isAdmin = user && user.email === ADMIN_EMAIL;
 
     const navLinks = [
         { label: "Blog", path: "/", active: isActive("/") && !location.pathname.startsWith("/post") },
         { label: "Dicionário", path: "/dicionario", active: isActive("/dicionario") },
         { label: "Sobre", path: "/sobre", active: isActive("/sobre") },
-        ...(user && user.email === ADMIN_EMAIL
+        ...(isAdmin
             ? [{ label: "Admin", path: "/admin", active: isActive("/admin") }]
             : []),
     ];
@@ -87,31 +75,17 @@ const Header = ({ user, onLoginSuccess, onLogout }: HeaderProps) => {
                             {theme === 'dark' ? <FiSun className="w-[18px] h-[18px]" /> : <FiMoon className="w-[18px] h-[18px]" />}
                         </button>
 
-                        {user ? (
+                        {isAdmin && (
                             <div className="flex items-center gap-3 animate-fade-in">
                                 <div className="w-8 h-8 rounded-full bg-sky-blue/10 dark:bg-sky-blue/20 flex items-center justify-center text-sky-blue font-bold text-sm border border-sky-blue/20">
                                     {user.username.charAt(0).toUpperCase()}
                                 </div>
-                                <span className="text-gray-700 dark:text-gray-200 font-medium text-sm hidden lg:block">
-                                    {user.username}
-                                </span>
                                 <button
                                     onClick={onLogout}
                                     className="ml-1 text-xs text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 transition-colors cursor-pointer"
                                 >
                                     Sair
                                 </button>
-                            </div>
-                        ) : (
-                            <div className="h-[40px] flex items-center justify-end">
-                                <GoogleLogin
-                                    onSuccess={handleGoogleSuccess}
-                                    onError={() => console.log('Login falhou')}
-                                    useOneTap
-                                    theme={theme === 'dark' ? 'filled_black' : 'outline'}
-                                    shape="rectangular"
-                                    text="signin_with"
-                                />
                             </div>
                         )}
                     </div>
@@ -153,8 +127,8 @@ const Header = ({ user, onLoginSuccess, onLogout }: HeaderProps) => {
                         </button>
                     ))}
 
-                    <div className="mt-2 pt-3 border-t border-gray-100 dark:border-gray-800/60 px-3">
-                        {user ? (
+                    {isAdmin && (
+                        <div className="mt-2 pt-3 border-t border-gray-100 dark:border-gray-800/60 px-3">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <div className="w-7 h-7 rounded-full bg-sky-blue/10 dark:bg-sky-blue/20 flex items-center justify-center text-sky-blue font-bold text-sm">
@@ -169,18 +143,8 @@ const Header = ({ user, onLoginSuccess, onLogout }: HeaderProps) => {
                                     Sair
                                 </button>
                             </div>
-                        ) : (
-                            <div className="flex justify-center py-1">
-                                <GoogleLogin
-                                    onSuccess={handleGoogleSuccess}
-                                    onError={() => console.log('Login falhou')}
-                                    theme="filled_blue"
-                                    shape="rectangular"
-                                    text="signin_with"
-                                />
-                            </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
             )}
         </header>

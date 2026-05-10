@@ -1,6 +1,5 @@
 import uuid
-from datetime import datetime, timezone
-from sqlalchemy import Column, String, ForeignKey, Table, Uuid, Boolean, DateTime
+from sqlalchemy import Column, String, ForeignKey, Table, Uuid, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -44,50 +43,6 @@ class Post(Base):
     
     user = relationship('User', back_populates='posts')
     tags = relationship('Tag', secondary=post_tags, back_populates='posts')
-    reactions = relationship('Reaction', back_populates='post', cascade='all, delete-orphan')
-    comments = relationship('Comment', back_populates='post', cascade='all, delete-orphan')
-    unique_views = relationship('PostView', back_populates='post', cascade='all, delete-orphan')
-
-    @property
-    def views(self):
-        return len(self.unique_views)
-
-class PostView(Base):
-    __tablename__ = 'post_views'
-    
-    post_id = Column(Uuid, ForeignKey('posts.id'), primary_key=True)
-    user_id = Column(Uuid, ForeignKey('users.id'), primary_key=True)
-    viewed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-
-    post = relationship('Post', back_populates='unique_views')
-
-class Reaction(Base):
-    __tablename__ = 'reactions'
-    
-    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
-    post_id = Column(Uuid, ForeignKey('posts.id'), nullable=False)
-    type = Column(String, nullable=False)
-    user_id = Column(Uuid, ForeignKey('users.id'), nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    
-    post = relationship('Post', back_populates='reactions')
-    user = relationship('User')
-
-class Comment(Base):
-    __tablename__ = 'comments'
-    
-    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
-    post_id = Column(Uuid, ForeignKey('posts.id'), nullable=False)
-    user_id = Column(Uuid, ForeignKey('users.id'), nullable=False)
-    content = Column(String(300), nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    
-    post = relationship('Post', back_populates='comments')
-    user = relationship('User')
-
-    @property
-    def username(self):
-        return self.user.username if self.user else "Anônimo"
 
 class DictionaryItem(Base):
     __tablename__ = 'dictionary_items'

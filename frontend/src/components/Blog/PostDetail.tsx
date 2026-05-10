@@ -3,17 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import type { Post } from "@/types";
 import { api } from "@/services/api";
 import { formatDate } from "@/utils/formatDate";
-import PostInteractions from "@/components/Blog/PostInteractions";
 import ShareMenu from "@/components/Blog/ShareMenu";
 
-interface PostDetailProps {
-  isAdmin?: boolean;
-  isLoggedIn?: boolean;
-  token?: string | null;
-  onLoginRequired?: () => void;
-}
 
-export default function PostDetail({ isAdmin = false, isLoggedIn = false, token, onLoginRequired }: PostDetailProps) {
+export default function PostDetail() {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
@@ -42,9 +35,6 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
     const fetchPost = async () => {
       try {
         setIsLoading(true);
-        if (isLoggedIn && token) {
-          api.registerView(postId, token).catch(console.error);
-        }
         const data = await api.getPost(postId);
         setPost(data);
       } catch (err) {
@@ -56,7 +46,7 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
     };
 
     fetchPost();
-  }, [postId, isLoggedIn, token]);
+  }, [postId]);
 
   if (isLoading) {
     return (
@@ -125,12 +115,6 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
           {/* Meta */}
           <div className="flex items-center gap-3 text-sm text-gray-400 dark:text-gray-500 font-medium mb-8">
             <span>{formatDate(post.date)}</span>
-            {isAdmin && (
-              <>
-                <span className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full"></span>
-                <span>{post.views ?? 0} visualizações</span>
-              </>
-            )}
           </div>
 
           {/* Share */}
@@ -162,8 +146,10 @@ export default function PostDetail({ isAdmin = false, isLoggedIn = false, token,
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
-        {/* Interactions */}
-        <PostInteractions postId={post.id} postTitle={post.title} isAdmin={isAdmin} isLoggedIn={isLoggedIn} token={token} onLoginRequired={onLoginRequired} />
+        {/* Share at bottom */}
+        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+          <ShareMenu postId={post.id} postTitle={post.title} />
+        </div>
       </article>
     </>
   );

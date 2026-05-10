@@ -11,7 +11,6 @@ export interface Post {
   image?: string;
   tags: Tag[];
   date: string;
-  views: number;
   is_public: boolean;
 }
 
@@ -47,22 +46,4 @@ export interface DictionaryItemCreate {
 
 export interface TagCreate {
   name: string;
-}
-
-export interface ReactionSummary {
-  likes: number;
-  dislikes: number;
-}
-
-export interface UserReaction {
-  type: string | null;
-}
-
-export interface CommentResponse {
-  id: string;
-  post_id: string;
-  content: string;
-  user_id: string;
-  username: string;
-  created_at: string;
 }

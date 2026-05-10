@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import Blog from "@/components/Blog/Blog";
@@ -10,6 +11,7 @@ import PostDetail from "@/components/Blog/PostDetail";
 import Toast from "@/components/Toast/Toast";
 import type { Post, Tag, DictionaryItem, User } from "@/types";
 import { api } from "@/services/api";
+import { useTheme } from "@/components/Theme/ThemeContext";
 
 const PermissionDeniedRedirect = ({ onDenied }: { onDenied: () => void }) => {
   useEffect(() => {
@@ -17,6 +19,39 @@ const PermissionDeniedRedirect = ({ onDenied }: { onDenied: () => void }) => {
   }, [onDenied]);
   return null;
 };
+
+function AdminLogin({ onLoginSuccess }: { onLoginSuccess: (user: User, token: string) => void }) {
+  const { theme } = useTheme();
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    if (credentialResponse.credential) {
+      try {
+        const result = await api.loginGoogle(credentialResponse.credential);
+        onLoginSuccess(result.user, result.access_token);
+      } catch (error) {
+        console.error("Erro ao autenticar no backend:", error);
+      }
+    }
+  };
+
+  return (
+    <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex flex-col items-center gap-6 animate-fade-in">
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 font-heading">Área Administrativa</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Faça login para continuar.</p>
+        </div>
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={() => console.log('Login falhou')}
+          theme={theme === 'dark' ? 'filled_black' : 'outline'}
+          shape="rectangular"
+          text="signin_with"
+        />
+      </div>
+    </div>
+  );
+}
 
 function App() {
   const navigate = useNavigate();
@@ -102,7 +137,6 @@ function App() {
     <div className="flex flex-col min-h-screen">
       <Header 
         user={user} 
-        onLoginSuccess={handleLoginSuccess} 
         onLogout={handleLogout} 
       />
 
@@ -120,12 +154,7 @@ function App() {
           } />
 
           <Route path="/post/:postId" element={
-            <PostDetail 
-              isAdmin={user?.is_admin ?? false}
-              isLoggedIn={!!user}
-              token={token}
-              onLoginRequired={() => setToastMessage("Para interagir, faça login. Suas interações não ficam públicas, apenas o dono do site pode visualizá-las.")}
-            />
+            <PostDetail />
           } />
 
           <Route path="/dicionario" element={<Dictionary items={dictionaryItems} onMount={fetchDictionary} />} />
@@ -146,7 +175,7 @@ function App() {
                 <PermissionDeniedRedirect onDenied={handlePermissionDenied} />
               )
             ) : (
-              <div className="text-center mt-10 text-red-600">Acesso Negado. Faça login como admin.</div>
+              <AdminLogin onLoginSuccess={handleLoginSuccess} />
             )
           } />
         </Routes>
