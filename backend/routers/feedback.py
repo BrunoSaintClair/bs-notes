@@ -1,7 +1,5 @@
-import smtplib
 import os
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import resend
 from fastapi import APIRouter, HTTPException, status
 from dotenv import load_dotenv
 
@@ -9,27 +7,18 @@ import schemas
 
 load_dotenv()
 
-SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER = os.getenv("SMTP_USER", "")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+resend.api_key = os.getenv("RESEND_API_KEY", "")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "")
 
 router = APIRouter()
 
 @router.post("/", status_code=status.HTTP_200_OK)
 def send_feedback(feedback: schemas.FeedbackCreate):
-    if not SMTP_USER or not SMTP_PASSWORD:
+    if not resend.api_key:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Serviço de e-mail não configurado."
+            detail="Serviço de e-mail (Resend) não configurado."
         )
-
-    sender_info = feedback.name
-    if feedback.email:
-        sender_info += f" ({feedback.email})"
-
-    subject = f"BS Notes — Novo feedback de {feedback.name}"
 
     html_body = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -53,22 +42,20 @@ def send_feedback(feedback: schemas.FeedbackCreate):
     </div>
     """
 
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"] = SMTP_USER
-    msg["To"] = ADMIN_EMAIL
-    if feedback.email:
-        msg["Reply-To"] = feedback.email
+    params = {
+        "from": "BS Notes <onboarding@resend.dev>",
+        "to": [ADMIN_EMAIL],
+        "subject": f"BS Notes — Novo feedback de {feedback.name}",
+        "html": html_body,
+    }
 
-    msg.attach(MIMEText(html_body, "html"))
+    if feedback.email:
+        params["reply_to"] = feedback.email
 
     try:
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.sendmail(SMTP_USER, ADMIN_EMAIL, msg.as_string())
+        resend.Emails.send(params)
     except Exception as e:
-        print(f"Erro ao enviar e-mail: {e}")
+        print(f"Erro ao enviar e-mail com Resend: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erro ao enviar mensagem. Tente novamente mais tarde."
