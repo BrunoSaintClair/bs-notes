@@ -21,14 +21,10 @@ Um blog pessoal e repositório de artigos criado com o intuito de compartilhar a
 
 ## ✨ Funcionalidades
 
-- **Autenticação:** Login via Google, gerando tokens JWT para controle de sessão.
+- **Autenticação Administrativa:** Login restrito via Google, gerando tokens JWT exclusivo para administradores da plataforma.
 - **Blog (Posts):** Criação, edição, listagem e visualização de posts.
-- **Interações:** 
-  - Comentários em posts.
-  - Sistema de reações (Like/Dislike).
-  - Suporte a contagem de visualizações únicas por usuário.
 - **Dicionário:** Área dedicada ao cadastramento de termos e definições com paginação e ordenação alfabética.
-- **Controle de Acesso:** Permissões diferenciadas para visitantes, usuários comuns (autenticados) e administradores (com acesso a edição, deleção e painéis restritos).
+- **Painel de Administração:** Controle de acesso restrito para edição e deleção de conteúdos, escondido da interface pública.
 
 
 ## 📂 Estrutura do Projeto
