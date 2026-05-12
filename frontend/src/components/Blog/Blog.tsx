@@ -36,10 +36,8 @@ export default function Blog({ posts, tags }: BlogProps) {
     return [...filtered].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [posts, selectedTag, searchQuery]);
 
-  // Separate the hero post (most recent) from the rest — only when no filter/search is active
-  const isDefaultView = !selectedTag && !searchQuery.trim();
-  const heroPost = isDefaultView && filteredPosts.length > 0 ? filteredPosts[0] : null;
-  const regularPosts = heroPost ? filteredPosts.slice(1) : filteredPosts;
+  const heroPost = filteredPosts.length > 0 ? filteredPosts[0] : null;
+  const regularPosts = heroPost ? filteredPosts.slice(1) : [];
   const displayedPosts = regularPosts.slice(0, postsToShow);
   const hasMorePosts = regularPosts.length > postsToShow;
 
@@ -106,7 +104,11 @@ export default function Blog({ posts, tags }: BlogProps) {
 
       {/* Articles list */}
       <div className="animate-fade-in-up-delay-2">
-        {filteredPosts.length > 0 ? (
+        {filteredPosts.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-400 dark:text-gray-500 text-sm">Nenhum post foi encontrado.</p>
+          </div>
+        ) : displayedPosts.length > 0 ? (
           <>
             {displayedPosts.map((post) => (
               <PostCard key={post.id} post={post} onReadMore={() => navigate(`/post/${post.id}`)} />
@@ -128,11 +130,7 @@ export default function Blog({ posts, tags }: BlogProps) {
               </div>
             )}
           </>
-        ) : (
-          <div className="text-center py-20">
-            <p className="text-gray-400 dark:text-gray-500 text-sm">Nenhum post foi encontrado.</p>
-          </div>
-        )}
+        ) : null}
       </div>
     </main>
   );
