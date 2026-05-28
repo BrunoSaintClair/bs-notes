@@ -177,4 +177,20 @@ export const api = {
     }
   },
 
+  uploadImage: async (file: File, token: string): Promise<{ url: string }> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`${API_URL}/uploads/`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      body: formData,
+    });
+    checkAuth(response);
+    if (!response.ok) throw new Error("Erro ao fazer upload da imagem");
+    return response.json();
+  },
+
 };

@@ -8,6 +8,7 @@ interface PostFormProps {
   postDescription: string;
   postContent: string;
   postImage: string;
+  postImageFile: File | null;
   postDate: string;
   postTags: string[];
   postIsPublic: boolean;
@@ -16,7 +17,7 @@ interface PostFormProps {
   onTitleChange: (v: string) => void;
   onDescriptionChange: (v: string) => void;
   onContentChange: (v: string) => void;
-  onImageChange: (v: string) => void;
+  onImageFileChange: (f: File | null) => void;
   onDateChange: (v: string) => void;
   onTagToggle: (tagId: string) => void;
   onIsPublicChange: (v: boolean) => void;
@@ -25,9 +26,9 @@ interface PostFormProps {
 }
 
 export default function PostForm({
-  editingPostId, postTitle, postDescription, postContent, postImage,
+  editingPostId, postTitle, postDescription, postContent, postImage, postImageFile,
   postDate, postTags, postIsPublic, isLoading, availableTags,
-  onTitleChange, onDescriptionChange, onContentChange, onImageChange,
+  onTitleChange, onDescriptionChange, onContentChange, onImageFileChange,
   onDateChange, onTagToggle, onIsPublicChange, onSubmit, onCancel,
 }: PostFormProps) {
   return (
@@ -77,19 +78,25 @@ export default function PostForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL da Imagem de Capa</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Imagem de Capa</label>
             <input
-              type="url"
-              value={postImage}
-              onChange={(e) => onImageChange(e.target.value)}
-              className="w-full p-2 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-gray-100 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-              placeholder="https://exemplo.com/imagem.jpg (opcional)"
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  onImageFileChange(file);
+                } else {
+                  onImageFileChange(null);
+                }
+              }}
+              className="w-full p-2 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-gray-100 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all file:mr-4 file:py-1 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               disabled={isLoading}
             />
-            {postImage && (
+            {(postImageFile || postImage) && (
               <div className="mt-2 relative flex flex-col items-center justify-center border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-lg p-2 bg-gray-50 dark:bg-gray-800/50">
                 <img
-                  src={postImage}
+                  src={postImageFile ? URL.createObjectURL(postImageFile) : postImage}
                   alt="Preview"
                   className="max-h-48 rounded shadow-md object-contain"
                   />

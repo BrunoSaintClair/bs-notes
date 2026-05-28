@@ -36,6 +36,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
   const [postDescription, setPostDescription] = useState("");
   const [postContent, setPostContent] = useState("");
   const [postImage, setPostImage] = useState("");
+  const [postImageFile, setPostImageFile] = useState<File | null>(null);
   const [postDate, setPostDate] = useState(getTodayDate());
   const [postTags, setPostTags] = useState<string[]>([]);
   const [postIsPublic, setPostIsPublic] = useState(true);
@@ -73,6 +74,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
     setPostDescription(post.description);
     setPostContent(post.content);
     setPostImage(post.image ?? "");
+    setPostImageFile(null);
     setPostDate(post.date);
     setPostTags(post.tags.map(t => t.id));
     setPostIsPublic(post.is_public !== undefined ? post.is_public : true);
@@ -86,6 +88,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
     setPostDescription("");
     setPostContent("");
     setPostImage("");
+    setPostImageFile(null);
     setPostDate(getTodayDate());
     setPostTags([]);
     setPostIsPublic(true);
@@ -163,11 +166,18 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
     }
     try {
       setIsLoadingPost(true);
+      
+      let imageUrl = postImage;
+      if (postImageFile) {
+        const uploadResult = await api.uploadImage(postImageFile, token);
+        imageUrl = uploadResult.url;
+      }
+
       const payload = {
         title: postTitle,
         description: postDescription,
         content: postContent,
-        image: postImage,
+        image: imageUrl,
         date: postDate,
         tag_ids: postTags,
         is_public: postIsPublic,
@@ -229,6 +239,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
             postDescription={postDescription}
             postContent={postContent}
             postImage={postImage}
+            postImageFile={postImageFile}
             postDate={postDate}
             postTags={postTags}
             postIsPublic={postIsPublic}
@@ -237,7 +248,7 @@ export default function Admin({ token, tags, dictionaryItems, refreshData, onSes
             onTitleChange={setPostTitle}
             onDescriptionChange={setPostDescription}
             onContentChange={setPostContent}
-            onImageChange={setPostImage}
+            onImageFileChange={setPostImageFile}
             onDateChange={setPostDate}
             onTagToggle={handleTagToggle}
             onIsPublicChange={setPostIsPublic}
