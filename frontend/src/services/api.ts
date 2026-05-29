@@ -181,7 +181,7 @@ export const api = {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch(`${API_URL}/uploads/`, {
+    const response = await fetch(`${API_URL}/upload/`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`

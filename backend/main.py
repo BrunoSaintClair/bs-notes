@@ -35,7 +35,7 @@ app.include_router(posts_router, prefix="/posts", tags=["Posts"])
 app.include_router(tags_router, prefix="/tags", tags=["Tags"])
 app.include_router(dictionary_router, prefix="/dictionary", tags=["Dictionary"])
 app.include_router(feedback_router, prefix="/feedback", tags=["Feedback"])
-app.include_router(uploads_router, prefix="/uploads", tags=["Uploads"])
+app.include_router(uploads_router, prefix="/upload", tags=["Uploads"])
 
 @app.get("/")
 def read_root():
