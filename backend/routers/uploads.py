@@ -1,25 +1,26 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
-import shutil
-import os
-import uuid
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+import base64
 from dependencies import verify_admin
 
 router = APIRouter()
 
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+
 @router.post("/")
-def upload_file(request: Request, file: UploadFile = File(...), admin_email: str = Depends(verify_admin)):
+async def upload_file(file: UploadFile = File(...), admin_email: str = Depends(verify_admin)):
     if not file:
         raise HTTPException(status_code=400, detail="Nenhum arquivo enviado.")
     
-    ext = file.filename.split('.')[-1] if '.' in file.filename else ''
-    filename = f"{uuid.uuid4()}.{ext}" if ext else str(uuid.uuid4())
+    content_type = file.content_type or "image/png"
+    if not content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Apenas arquivos de imagem são permitidos.")
     
-    upload_dir = "uploads"
-    os.makedirs(upload_dir, exist_ok=True)
+    file_bytes = await file.read()
     
-    filepath = os.path.join(upload_dir, filename)
+    if len(file_bytes) > MAX_FILE_SIZE:
+        raise HTTPException(status_code=400, detail="Arquivo muito grande. Máximo 5MB.")
     
-    with open(filepath, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    b64_data = base64.b64encode(file_bytes).decode("utf-8")
+    data_url = f"data:{content_type};base64,{b64_data}"
         
-    return {"url": f"{request.base_url}uploads/{filename}"}
+    return {"url": data_url}

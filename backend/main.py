@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import users_router, posts_router, tags_router, dictionary_router, feedback_router
 from routers.uploads import router as uploads_router
-from fastapi.staticfiles import StaticFiles
 import os
 from dotenv import load_dotenv
 
@@ -19,9 +18,6 @@ if FRONTEND_URL:
     origins.append(FRONTEND_URL)
 
 app = FastAPI()
-
-os.makedirs("uploads", exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, ForeignKey, Table, Uuid, Boolean
+from sqlalchemy import Column, String, Text, ForeignKey, Table, Uuid, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -35,7 +35,7 @@ class Post(Base):
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
     content = Column(String, nullable=False, default="")
-    image = Column(String, nullable=True, default="")
+    image = Column(Text, nullable=True, default="")
     date = Column(String, nullable=False)
 
     is_public = Column(Boolean, default=True)
