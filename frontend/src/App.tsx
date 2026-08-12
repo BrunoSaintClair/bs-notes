@@ -158,8 +158,9 @@ function App() {
 
           const isNew = postsData.length > cachedPosts.length;
           const msg = isNew
-            ? "Novo artigo publicado no blog!"
+            ? "Novo artigo publicado!"
             : "Conteúdo do blog atualizado.";
+
 
           showToast(msg, "info");
         } else {
@@ -167,13 +168,13 @@ function App() {
 
           const isNew = postsData.length > cachedPosts.length;
           const msg = isNew
-            ? "Novo artigo publicado no blog!"
+            ? "Novo artigo publicado!"
             : "Conteúdo do blog atualizado.";
 
           showToast(
             msg,
             "info",
-            "Clique para atualizar a tela",
+            "Clique para atualizar feed",
             () => {
               setPosts(postsData);
               localStorage.setItem("bs_cached_posts", JSON.stringify(postsData));
