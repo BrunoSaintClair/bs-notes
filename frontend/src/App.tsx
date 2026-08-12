@@ -128,11 +128,16 @@ function App() {
     showToast("Você não tem permissão para acessar a área administrativa.", "warning");
   }, [navigate, showToast]);
 
+  const prevPathnameRef = useRef(location.pathname);
+
   useEffect(() => {
-    if (pendingPostsUpdate) {
-      setPosts(pendingPostsUpdate);
-      localStorage.setItem("bs_cached_posts", JSON.stringify(pendingPostsUpdate));
-      setPendingPostsUpdate(null);
+    if (prevPathnameRef.current !== location.pathname) {
+      prevPathnameRef.current = location.pathname;
+      if (pendingPostsUpdate) {
+        setPosts(pendingPostsUpdate);
+        localStorage.setItem("bs_cached_posts", JSON.stringify(pendingPostsUpdate));
+        setPendingPostsUpdate(null);
+      }
     }
   }, [location.pathname, pendingPostsUpdate]);
 
