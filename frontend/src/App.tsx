@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
@@ -55,10 +55,22 @@ function AdminLogin({ onLoginSuccess }: { onLoginSuccess: (user: User, token: st
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [dictionaryItems, setDictionaryItems] = useState<DictionaryItem[]>([]);
+  const [posts, setPosts] = useState<Post[]>(() => {
+    const cached = localStorage.getItem("bs_cached_posts");
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [tags, setTags] = useState<Tag[]>(() => {
+    const cached = localStorage.getItem("bs_cached_tags");
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [dictionaryItems, setDictionaryItems] = useState<DictionaryItem[]>(() => {
+    const cached = localStorage.getItem("bs_cached_dictionary");
+    return cached ? JSON.parse(cached) : [];
+  });
+
+  const [pendingPostsUpdate, setPendingPostsUpdate] = useState<Post[] | null>(null);
 
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("user");
@@ -67,9 +79,28 @@ function App() {
 
   const [token, setToken] = useState<string | null>(localStorage.getItem("authToken"));
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(() => {
+    const cachedPosts = localStorage.getItem("bs_cached_posts");
+    return !cachedPosts;
+  });
   const [error, setError] = useState<string | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const [toastConfig, setToastConfig] = useState<{
+    message: string;
+    type?: "error" | "success" | "warning" | "info";
+    duration?: number;
+    actionLabel?: string;
+    onClickAction?: () => void;
+  } | null>(null);
+
+  const showToast = useCallback((
+    message: string,
+    type: "error" | "success" | "warning" | "info" = "warning",
+    actionLabel?: string,
+    onClickAction?: () => void
+  ) => {
+    setToastConfig({ message, type, duration: 6000, actionLabel, onClickAction });
+  }, []);
 
   const handleLoginSuccess = (userData: User, rawToken: string) => {
     setUser(userData);
@@ -87,17 +118,28 @@ function App() {
 
   const handleSessionExpired = () => {
     handleLogout();
-    setToastMessage("Sua sessão expirou. Faça login novamente para acessar o painel administrativo.");
+    showToast("Sua sessão expirou. Faça login novamente para acessar o painel administrativo.", "warning");
   };
 
   const handlePermissionDenied = useCallback(() => {
     navigate("/");
-    setToastMessage("Você não tem permissão para acessar a área administrativa.");
-  }, [navigate]);
+    showToast("Você não tem permissão para acessar a área administrativa.", "warning");
+  }, [navigate, showToast]);
 
-  const fetchInitialData = useCallback(async (showLoading = true) => {
+  useEffect(() => {
+    if (pendingPostsUpdate) {
+      setPosts(pendingPostsUpdate);
+      localStorage.setItem("bs_cached_posts", JSON.stringify(pendingPostsUpdate));
+      setPendingPostsUpdate(null);
+    }
+  }, [location.pathname, pendingPostsUpdate]);
+
+  const fetchInitialData = useCallback(async (isExplicitRefresh = false) => {
     try {
-      if (showLoading) {
+      const cachedPostsJson = localStorage.getItem("bs_cached_posts");
+      const cachedPosts: Post[] = cachedPostsJson ? JSON.parse(cachedPostsJson) : [];
+
+      if (cachedPosts.length === 0 && !isExplicitRefresh) {
         setIsLoading(true);
       }
 
@@ -105,33 +147,71 @@ function App() {
         api.getPosts(),
         api.getTags(),
       ]);
-      setPosts(postsData);
-      setTags(tagsData);
-    } catch (err) {
-      console.error(err);
-      setError("Erro ao carregar dados.");
-    } finally {
-      if (showLoading) {
-        setIsLoading(false);
+
+      if (JSON.stringify(tagsData) !== localStorage.getItem("bs_cached_tags")) {
+        setTags(tagsData);
+        localStorage.setItem("bs_cached_tags", JSON.stringify(tagsData));
       }
+
+      const postsChanged = JSON.stringify(postsData) !== JSON.stringify(cachedPosts);
+
+      if (postsChanged) {
+        if (cachedPosts.length === 0 || isExplicitRefresh) {
+          setPosts(postsData);
+          localStorage.setItem("bs_cached_posts", JSON.stringify(postsData));
+          setPendingPostsUpdate(null);
+        } else {
+          setPendingPostsUpdate(postsData);
+
+          const isNew = postsData.length > cachedPosts.length;
+          const msg = isNew
+            ? "✨ Novo artigo publicado no blog!"
+            : "📝 Conteúdo do blog atualizado.";
+
+          showToast(
+            msg,
+            "info",
+            "Clique para atualizar a tela",
+            () => {
+              setPosts(postsData);
+              localStorage.setItem("bs_cached_posts", JSON.stringify(postsData));
+              setPendingPostsUpdate(null);
+            }
+          );
+        }
+      }
+    } catch (err) {
+      console.error("Revalidação em segundo plano:", err);
+      if (!localStorage.getItem("bs_cached_posts")) {
+        setError("Erro ao carregar dados.");
+      }
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   const fetchDictionary = useCallback(async () => {
-    if (dictionaryItems.length > 0) return;
     try {
       const data = await api.getDictionaryItems();
-      setDictionaryItems(data);
+      const cachedDictJson = localStorage.getItem("bs_cached_dictionary");
+      if (JSON.stringify(data) !== cachedDictJson) {
+        setDictionaryItems(data);
+        localStorage.setItem("bs_cached_dictionary", JSON.stringify(data));
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Revalidação do dicionário:", err);
     }
-  }, [dictionaryItems.length]);
+  }, []);
 
   useEffect(() => {
     fetchInitialData();
   }, [fetchInitialData]);
 
-  const refreshData = () => fetchInitialData(false);
+  const refreshData = useCallback(async () => {
+    await fetchInitialData(true);
+    await fetchDictionary();
+  }, [fetchInitialData, fetchDictionary]);
+
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -191,11 +271,14 @@ function App() {
       
       <Footer />
 
-      {toastMessage && (
+      {toastConfig && (
         <Toast 
-          message={toastMessage} 
-          type="warning" 
-          onClose={() => setToastMessage(null)} 
+          message={toastConfig.message} 
+          type={toastConfig.type} 
+          duration={toastConfig.duration}
+          actionLabel={toastConfig.actionLabel}
+          onClickAction={toastConfig.onClickAction}
+          onClose={() => setToastConfig(null)} 
         />
       )}
     </div>
