@@ -128,20 +128,7 @@ function App() {
     showToast("Você não tem permissão para acessar a área administrativa.", "warning");
   }, [navigate, showToast]);
 
-  const prevPathnameRef = useRef(location.pathname);
-
-  useEffect(() => {
-    if (prevPathnameRef.current !== location.pathname) {
-      prevPathnameRef.current = location.pathname;
-      if (pendingPostsUpdate) {
-        setPosts(pendingPostsUpdate);
-        localStorage.setItem("bs_cached_posts", JSON.stringify(pendingPostsUpdate));
-        setPendingPostsUpdate(null);
-      }
-    }
-  }, [location.pathname, pendingPostsUpdate]);
-
-  const fetchInitialData = useCallback(async (isExplicitRefresh = false) => {
+  const fetchInitialData = useCallback(async (isExplicitRefresh = false, autoApply = false) => {
     try {
       const cachedPostsJson = localStorage.getItem("bs_cached_posts");
       const cachedPosts: Post[] = cachedPostsJson ? JSON.parse(cachedPostsJson) : [];
@@ -163,10 +150,18 @@ function App() {
       const postsChanged = JSON.stringify(postsData) !== JSON.stringify(cachedPosts);
 
       if (postsChanged) {
-        if (cachedPosts.length === 0 || isExplicitRefresh) {
+        const isHome = location.pathname === "/";
+        if (cachedPosts.length === 0 || isExplicitRefresh || autoApply || isHome) {
           setPosts(postsData);
           localStorage.setItem("bs_cached_posts", JSON.stringify(postsData));
           setPendingPostsUpdate(null);
+
+          const isNew = postsData.length > cachedPosts.length;
+          const msg = isNew
+            ? "Novo artigo publicado no blog!"
+            : "Conteúdo do blog atualizado.";
+
+          showToast(msg, "info");
         } else {
           setPendingPostsUpdate(postsData);
 
@@ -174,7 +169,6 @@ function App() {
           const msg = isNew
             ? "Novo artigo publicado no blog!"
             : "Conteúdo do blog atualizado.";
-
 
           showToast(
             msg,
@@ -196,7 +190,7 @@ function App() {
     } finally {
       setIsLoading(false);
     }
-  }, [showToast]);
+  }, [showToast, location.pathname]);
 
   const fetchDictionary = useCallback(async () => {
     try {
@@ -211,6 +205,23 @@ function App() {
     }
   }, []);
 
+  const prevPathnameRef = useRef(location.pathname);
+
+  useEffect(() => {
+    if (prevPathnameRef.current !== location.pathname) {
+      prevPathnameRef.current = location.pathname;
+
+      if (location.pathname === "/" || pendingPostsUpdate) {
+        if (pendingPostsUpdate) {
+          setPosts(pendingPostsUpdate);
+          localStorage.setItem("bs_cached_posts", JSON.stringify(pendingPostsUpdate));
+          setPendingPostsUpdate(null);
+        }
+        fetchInitialData(false, true);
+      }
+    }
+  }, [location.pathname, pendingPostsUpdate, fetchInitialData]);
+
   useEffect(() => {
     fetchInitialData();
   }, [fetchInitialData]);
@@ -220,7 +231,7 @@ function App() {
       const now = Date.now();
       if (now - lastFocusFetchRef.current > 15000) {
         lastFocusFetchRef.current = now;
-        fetchInitialData();
+        fetchInitialData(false, true);
         fetchDictionary();
       }
     };
@@ -230,6 +241,7 @@ function App() {
       window.removeEventListener("focus", handleFocus);
     };
   }, [fetchInitialData, fetchDictionary]);
+
 
   const refreshData = useCallback(async () => {
     await fetchInitialData(true);

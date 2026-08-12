@@ -42,8 +42,9 @@ export default function Blog({ posts, tags }: BlogProps) {
   const hasMorePosts = regularPosts.length > postsToShow;
 
   return (
-    <main className="flex-1 max-w-[1120px] mx-auto px-4 sm:px-6 py-10 md:py-16 w-full">
+    <main key={posts.length + (posts[0]?.id || "")} className="flex-1 max-w-[1120px] mx-auto px-4 sm:px-6 py-10 md:py-16 w-full animate-fade-in">
       {/* Hero Section */}
+
       {heroPost && (
         <HeroSection
           post={heroPost}
