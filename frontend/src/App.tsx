@@ -167,8 +167,9 @@ function App() {
 
           const isNew = postsData.length > cachedPosts.length;
           const msg = isNew
-            ? "✨ Novo artigo publicado no blog!"
-            : "📝 Conteúdo do blog atualizado.";
+            ? "Novo artigo publicado no blog!"
+            : "Conteúdo do blog atualizado.";
+
 
           showToast(
             msg,
