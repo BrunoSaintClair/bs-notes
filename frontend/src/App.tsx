@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import Header from "@/components/Header/Header";
@@ -92,6 +92,8 @@ function App() {
     actionLabel?: string;
     onClickAction?: () => void;
   } | null>(null);
+
+  const lastFocusFetchRef = useRef<number>(Date.now());
 
   const showToast = useCallback((
     message: string,
@@ -206,6 +208,22 @@ function App() {
   useEffect(() => {
     fetchInitialData();
   }, [fetchInitialData]);
+
+  useEffect(() => {
+    const handleFocus = () => {
+      const now = Date.now();
+      if (now - lastFocusFetchRef.current > 15000) {
+        lastFocusFetchRef.current = now;
+        fetchInitialData();
+        fetchDictionary();
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [fetchInitialData, fetchDictionary]);
 
   const refreshData = useCallback(async () => {
     await fetchInitialData(true);
