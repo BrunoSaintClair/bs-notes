@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { Post, Tag } from "@/types";
 import PostCard from "@/components/Blog/PostCard";
 import HeroSection from "@/components/Blog/HeroSection";
+import { slugify } from "@/utils/slugify";
 
 interface BlogProps {
   posts: Post[];
@@ -48,7 +49,7 @@ export default function Blog({ posts, tags }: BlogProps) {
       {heroPost && (
         <HeroSection
           post={heroPost}
-          onReadMore={() => navigate(`/post/${heroPost.id}`)}
+          onReadMore={() => navigate(`/post/${slugify(heroPost.title)}`)}
         />
       )}
 
@@ -112,7 +113,7 @@ export default function Blog({ posts, tags }: BlogProps) {
         ) : displayedPosts.length > 0 ? (
           <>
             {displayedPosts.map((post) => (
-              <PostCard key={post.id} post={post} onReadMore={() => navigate(`/post/${post.id}`)} />
+              <PostCard key={post.id} post={post} onReadMore={() => navigate(`/post/${slugify(post.title)}`)} />
             ))}
             {hasMorePosts && (
               <div className="flex justify-center pt-10">

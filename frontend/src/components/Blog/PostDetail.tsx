@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import type { Post } from "@/types";
 import { api } from "@/services/api";
 import { formatDate } from "@/utils/formatDate";
+import { slugify } from "@/utils/slugify";
 import ShareMenu from "@/components/Blog/ShareMenu";
 
 
@@ -35,8 +36,22 @@ export default function PostDetail() {
     const fetchPost = async () => {
       try {
         setIsLoading(true);
-        const data = await api.getPost(postId);
-        setPost(data);
+
+        const cachedJson = localStorage.getItem("bs_cached_posts");
+        const posts: Post[] = cachedJson ? JSON.parse(cachedJson) : await api.getPosts();
+
+        let found = posts.find((p) => p.id === postId || slugify(p.title) === postId);
+
+        if (!found && cachedJson) {
+          const freshPosts = await api.getPosts();
+          found = freshPosts.find((p) => p.id === postId || slugify(p.title) === postId);
+        }
+
+        if (found) {
+          setPost(found);
+        } else {
+          setError("Artigo não encontrado.");
+        }
       } catch (err) {
         console.error(err);
         setError("Erro ao carregar o artigo.");

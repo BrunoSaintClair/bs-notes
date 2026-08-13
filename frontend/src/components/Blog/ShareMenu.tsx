@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { BiShareAlt, BiCopy, BiCheck } from "react-icons/bi";
 import { FaWhatsapp } from "react-icons/fa";
+import { slugify } from "@/utils/slugify";
 
 interface ShareMenuProps {
   postId: string;
@@ -11,7 +12,7 @@ export default function ShareMenu({ postId, postTitle }: ShareMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-  const shareUrl = `${window.location.origin}/post/${postId}`;
+  const shareUrl = `${window.location.origin}/post/${slugify(postTitle) || postId}`;
 
   useEffect(() => {
     if (!isOpen) return;
