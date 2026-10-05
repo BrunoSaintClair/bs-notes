@@ -11,19 +11,20 @@ export default function HeroSection({ post, onReadMore }: HeroSectionProps) {
     <section className="relative mb-16 md:mb-24 animate-fade-in-up">
       {/* Featured article card */}
       <div 
-        className="group relative overflow-hidden rounded-2xl cursor-pointer"
+        className="group relative overflow-hidden rounded-2xl cursor-pointer bg-gray-950 isolate transform-gpu"
+        style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}
         onClick={onReadMore}
       >
         {/* Image */}
-        <div className="relative h-[320px] sm:h-[400px] md:h-[480px] overflow-hidden">
+        <div className="relative h-[320px] sm:h-[400px] md:h-[480px] overflow-hidden rounded-2xl">
           {post.image ? (
             <img
               src={post.image}
               alt={post.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover rounded-2xl transition-transform duration-700 group-hover:scale-105"
             />
           ) : (
-            <div className="w-full h-full bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900" />
+            <div className="w-full h-full rounded-2xl bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900" />
           )}
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-linear-to-t from-gray-950/90 via-gray-950/40 to-transparent" />
@@ -33,7 +34,7 @@ export default function HeroSection({ post, onReadMore }: HeroSectionProps) {
         <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-10">
           <div className="flex items-center gap-3 mb-4">
             {post.tags.length > 0 && (
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-sky-blue bg-sky-blue/15 px-3 py-1 rounded-full backdrop-blur-sm">
+              <span className="text-[11px] font-semibold uppercase tracking-widest text-white bg-sky-500/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-xs">
                 {post.tags[0].name}
               </span>
             )}
