@@ -16,7 +16,7 @@ origins = [
 ]
 
 if FRONTEND_URL:
-    origins.append(FRONTEND_URL)
+    origins.extend([url.strip() for url in FRONTEND_URL.split(",") if url.strip()])
 
 import models
 from database import engine
