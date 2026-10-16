@@ -18,6 +18,12 @@ origins = [
 if FRONTEND_URL:
     origins.append(FRONTEND_URL)
 
+import models
+from database import engine
+
+# Cria as tabelas no banco de dados automaticamente se ainda não existirem
+models.Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
